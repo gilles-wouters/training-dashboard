@@ -1,0 +1,33 @@
+name: Update training data
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Fetch from intervals.icu
+        env:
+          ICU_ATHLETE_ID: ${{ secrets.ICU_ATHLETE_ID }}
+          ICU_API_KEY: ${{ secrets.ICU_API_KEY }}
+        run: node fetch.mjs
+
+      - name: Commit if anything changed
+        run: |
+          git config user.name "training-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data.json
+          git diff --staged --quiet || git commit -m "Update training data"
+          git push
