@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Training block</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F2F2EE; --card:#FBFBF9; --ink:#15181B; --mid:#5E656C; --faint:#9AA0A6;
+  --rule:#DBDBD4; --track:#B0232C; --moss:#3D6B49; --amber:#9C6400;
+  --mono:'IBM Plex Mono',ui-monospace,monospace; --sans:'Archivo',system-ui,sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{--paper:#131417; --card:#1A1C20; --ink:#ECEBE6; --mid:#A2A8AF; --faint:#71777E;
+        --rule:#2B2E33; --track:#E0605F; --moss:#6FA97E; --amber:#D3A03C;}
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--paper)}
+body{color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
+  padding:24px 18px 56px;max-width:820px;margin:0 auto;-webkit-font-smoothing:antialiased}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);margin:0 0 8px}
+hr{height:1px;background:var(--rule);border:0;margin:28px 0}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:16px 18px}
+.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.count{font-family:var(--mono);font-size:62px;line-height:.92;font-weight:600;letter-spacing:-.03em}
+.countsub{font-size:13px;color:var(--mid);margin-top:6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{font-family:var(--mono);font-size:11.5px;padding:4px 9px;border:1px solid var(--rule);
+  border-radius:2px;color:var(--mid);background:var(--card)}
+.chip b{color:var(--ink);font-weight:600}
+.hero{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--track);padding:16px 18px}
+.herodate{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--track)}
+.herotitle{font-size:22px;font-weight:500;margin:5px 0 2px;letter-spacing:-.01em}
+.herodet{color:var(--mid);font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px}
+.tile{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:13px 15px}
+.tlab{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.tval{font-family:var(--mono);font-size:25px;font-weight:600;margin-top:5px;letter-spacing:-.02em}
+.tsub{font-size:12.5px;color:var(--mid);margin-top:2px}
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:9px}
+.bar i{display:block;height:100%;background:var(--track);border-radius:3px}
+.bar.g i{background:var(--moss)}
+.verdict{margin-top:0;padding:12px 14px;border-radius:2px;font-size:14px;
+  border-left:3px solid var(--rule);background:var(--card);border-top:1px solid var(--rule);
+  border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.verdict.go{border-left-color:var(--moss);color:var(--moss)}
+.verdict.hold{border-left-color:var(--amber);color:var(--amber)}
+.verdict.stop{border-left-color:var(--track);color:var(--track)}
+ul.lad{list-style:none;margin:10px 0 0;padding:0}
+ul.lad li{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--rule)}
+ul.lad li:first-child{border-top:0}
+.day{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--faint);
+  width:58px;flex:0 0 58px;padding-top:3px;text-transform:uppercase}
+.sess{font-size:14.5px}
+.meta{font-size:12.5px;color:var(--mid);margin-top:2px}
+.key{color:var(--track);font-family:var(--mono);font-size:12px}
+li.on .sess{color:var(--faint);text-decoration:line-through}
+li.on .meta{color:var(--faint)}
+.dot{flex:0 0 9px;width:9px;height:9px;border-radius:50%;margin-top:8px;
+  background:var(--rule);border:1px solid var(--rule)}
+li.on .dot{background:var(--moss);border-color:var(--moss)}
+.wk{margin-top:26px}
+.wkhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.wklab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.wkkm{font-family:var(--mono);font-size:12.5px;color:var(--mid);font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
+th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);font-weight:400;padding:0 0 7px;border-bottom:1px solid var(--rule)}
+td{padding:8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.chartwrap{position:relative;width:100%;height:230px;margin-top:12px}
+.stamp{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--faint);margin-top:32px}
+.err{border-left:3px solid var(--track);background:var(--card);padding:13px 15px;font-size:14px;
+  border-top:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+@media(max-width:520px){
+  body{padding:18px 14px 40px}
+  .count{font-size:46px}
+  .day{width:48px;flex:0 0 48px;font-size:10.5px}
+  .herotitle{font-size:19px}
+}
+</style>
+</head>
+<body>
+
+<p class="eyebrow" id="blockLabel">Block 1 · rebuild</p>
+<div class="count" id="cd">—</div>
+<div class="countsub">days to 31 December</div>
+<div class="chips">
+  <span class="chip">5K <b>23:46</b> → <b>19:59</b></span>
+  <span class="chip">10K <b>49:18</b> → <b>42:00</b></span>
+  <span class="chip">HALF <b>1:43</b> → spring 2027</span>
+</div>
+
+<div id="banner"></div>
+
+<hr>
+
+<p class="eyebrow">Next up</p>
+<div class="hero">
+  <div class="herodate" id="hDate">—</div>
+  <div class="herotitle" id="hTitle">Loading</div>
+  <div class="herodet" id="hDet">Reading your latest data</div>
+</div>
+
+<hr>
+
+<p class="eyebrow">This morning</p>
+<div class="verdict" id="verdict">Waiting for wellness data</div>
+<div class="grid">
+  <div class="tile"><div class="tlab">Overnight HRV</div><div class="tval n" id="mHrv">—</div><div class="tsub" id="sHrv">baseline 57</div></div>
+  <div class="tile"><div class="tlab">Resting HR</div><div class="tval n" id="mRhr">—</div><div class="tsub" id="sRhr">baseline 49</div></div>
+  <div class="tile"><div class="tlab">Fitness (CTL)</div><div class="tval n" id="mCtl">—</div><div class="tsub" id="sCtl">chronic load</div></div>
+  <div class="tile"><div class="tlab">This week</div><div class="tval n" id="mKm">—</div><div class="tsub" id="sKm">against target</div></div>
+</div>
+
+<hr>
+
+<p class="eyebrow">Weekly volume, planned against actual</p>
+<div class="chartwrap"><canvas id="volChart" role="img" aria-label="Weekly running volume, planned target against actual kilometres run."></canvas></div>
+
+<hr>
+
+<p class="eyebrow">Sessions</p>
+<div id="weeks"></div>
+
+<hr>
+
+<p class="eyebrow">Paces</p>
+<table>
+  <thead><tr><th style="width:34%">Effort</th><th style="width:33%">Pace</th><th style="width:33%">Heart rate</th></tr></thead>
+  <tbody>
+    <tr><td>Easy</td><td class="n">5:55–6:10</td><td class="n">under 145</td></tr>
+    <tr><td>Steady</td><td class="n">5:25–5:35</td><td class="n">150–158</td></tr>
+    <tr><td>Threshold</td><td class="n">~4:50</td><td class="n">168–175</td></tr>
+    <tr><td>Strides</td><td class="n">~3:50 feel</td><td class="n">not measured</td></tr>
+  </tbody>
+</table>
+
+<p class="stamp" id="stamp">&nbsp;</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+/* ------------------------------------------------------------------
+   THE PLAN. This is the only part you edit by hand.
+   Each week: monday date, target km, and the sessions.
+   A session counts as done when a run appears in your Garmin data
+   on that date, so there is nothing to tick.
+   ------------------------------------------------------------------ */
+const PLAN = [
+ {mon:"2026-08-10", km:42, label:"Week 1", dates:"10–16 Aug", s:[
+   {d:"2026-08-16", t:"15 km long run", m:"Bois de la Cambre · early · HR cap 145"}]},
+ {mon:"2026-08-17", km:42, label:"Week 2", dates:"17–23 Aug", s:[
+   {d:"2026-08-18", t:"8 km easy + 6×20s strides", m:"Streets"},
+   {d:"2026-08-19", t:"8 km easy", m:"Streets"},
+   {d:"2026-08-20", t:"7 km easy + 6×20s strides", m:"Streets"},
+   {d:"2026-08-22", t:"5 km very easy", m:"Shakeout"},
+   {d:"2026-08-23", t:"14 km long run", m:"Bois de la Cambre"}]},
+ {mon:"2026-08-24", km:46, label:"Week 3", dates:"24–30 Aug", s:[
+   {d:"2026-08-25", t:"10 km with 20 min tempo", m:"Étangs · HR 168–172", key:1},
+   {d:"2026-08-26", t:"8 km easy", m:"Streets"},
+   {d:"2026-08-27", t:"8 km easy + 6×20s strides", m:"Streets"},
+   {d:"2026-08-29", t:"5 km very easy", m:"Shakeout"},
+   {d:"2026-08-30", t:"15 km long run", m:"Last 15 min steady"}]},
+ {mon:"2026-08-31", km:50, label:"Week 4", dates:"31 Aug – 6 Sep", s:[
+   {d:"2026-09-01", t:"10 km with 2×12 min threshold", m:"Étangs · 3 min jog · HR 168–175", key:1},
+   {d:"2026-09-02", t:"9 km easy", m:"Streets"},
+   {d:"2026-09-03", t:"9 km with 8×45s uphill", m:"Parc Duden · jog down", key:1},
+   {d:"2026-09-05", t:"6 km very easy", m:"Shakeout"},
+   {d:"2026-09-06", t:"16 km long run", m:"Last 20 min steady"}]},
+ {mon:"2026-09-07", km:40, label:"Week 5", dates:"7–13 Sep", s:[
+   {d:"2026-09-08", t:"8 km easy + 6×20s strides", m:"Down week"},
+   {d:"2026-09-09", t:"8 km easy", m:"Streets"},
+   {d:"2026-09-10", t:"9 km with 3×6 min threshold", m:"Étangs · 2 min jog", key:1},
+   {d:"2026-09-12", t:"5 km very easy + 4×20s strides", m:"Legs open"},
+   {d:"2026-09-13", t:"5k time trial", m:"Cinquantenaire · measure a lap first", key:1}]}
+];
+
+// Targets for the rest of the year. Refine these after the 13 Sep time trial.
+const FUTURE = [
+ ["2026-09-14",52],["2026-09-21",56],["2026-09-28",60],["2026-10-05",46],
+ ["2026-10-12",58],["2026-10-19",62],["2026-10-26",50],["2026-11-02",62],
+ ["2026-11-09",65],["2026-11-16",55],["2026-11-23",62],["2026-11-30",58],
+ ["2026-12-07",50],["2026-12-14",45],["2026-12-21",40]
+];
+
+const BASE_HRV = 57, BASE_RHR = 49;
+
+const $ = (id) => document.getElementById(id);
+const iso = (d) => d.toISOString().slice(0,10);
+function monday(d){const x=new Date(d);const g=(x.getDay()+6)%7;x.setDate(x.getDate()-g);x.setHours(0,0,0,0);return x;}
+
+$("cd").textContent = Math.max(0, Math.round((new Date("2026-12-31T00:00:00") - new Date().setHours(0,0,0,0))/864e5));
+
+fetch("./data.json?t=" + Date.now())
+  .then(r => { if(!r.ok) throw new Error("data.json not found"); return r.json(); })
+  .then(render)
+  .catch(e => {
+    $("banner").innerHTML = '<div class="err" style="margin-top:20px">No data yet. Open the <b>Actions</b> tab in your repository and run <b>Update training data</b> manually. If it fails, the log will say why.</div>';
+    $("hTitle").textContent = "Waiting for first sync";
+    $("hDet").textContent = e.message;
+  });
+
+function render(data){
+  const acts = data.activities || [];
+  const well = data.wellness || [];
+  const byDate = {};
+  acts.forEach(a => { byDate[a.date] = (byDate[a.date] || 0) + a.km; });
+
+  // --- next session -------------------------------------------------
+  const today = iso(new Date());
+  let next = null;
+  PLAN.forEach(w => w.s.forEach(s => {
+    if (byDate[s.d]) return;
+    if (s.d < today) return;
+    if (!next || s.d < next.d) next = s;
+  }));
+  if (next){
+    const diff = Math.round((new Date(next.d) - new Date(today))/864e5);
+    const rel = diff === 0 ? "Today" : diff === 1 ? "Tomorrow" : "In " + diff + " days";
+    const dn = new Date(next.d).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
+    $("hDate").textContent = (dn + " · " + rel).toUpperCase();
+    $("hTitle").textContent = next.t;
+    $("hDet").textContent = next.m;
+  } else {
+    $("hDate").textContent = "BLOCK COMPLETE";
+    $("hTitle").textContent = "Every session logged";
+    $("hDet").textContent = "Time to plan the next block.";
+  }
+
+  // --- wellness -----------------------------------------------------
+  const latest = well.find(w => w.hrv != null || w.rhr != null);
+  const v = $("verdict");
+  if (latest){
+    const h = latest.hrv, r = latest.rhr;
+    if (h != null){ $("mHrv").textContent = Math.round(h);
+      $("sHrv").textContent = (h >= BASE_HRV ? "+" : "") + Math.round(h - BASE_HRV) + " vs baseline"; }
+    if (r != null){ $("mRhr").textContent = Math.round(r);
+      $("sRhr").textContent = (r >= BASE_RHR ? "+" : "") + Math.round(r - BASE_RHR) + " vs baseline"; }
+    if (latest.ctl != null) $("mCtl").textContent = Math.round(latest.ctl);
+    if (h != null && h < 45 || r != null && r >= 55){
+      v.className = "verdict stop";
+      v.textContent = "Swap today's session for easy running, or rest. This is the 6 August pattern.";
+    } else if (h != null && h < 50 || r != null && r >= 53){
+      v.className = "verdict hold";
+      v.textContent = "Run easy and hold the key session. Same reading tomorrow means take a rest day.";
+    } else {
+      v.className = "verdict go";
+      v.textContent = "Clear. Run the session as written.";
+    }
+  } else {
+    v.textContent = "No wellness data. Check that Garmin's sleep and wellness scopes are enabled in intervals.icu.";
+  }
+
+  // --- weekly totals ------------------------------------------------
+  const weekly = {};
+  acts.forEach(a => { const k = iso(monday(a.date)); weekly[k] = (weekly[k]||0) + a.km; });
+  const thisMon = iso(monday(new Date()));
+  const cur = PLAN.concat(FUTURE.map(f => ({mon:f[0], km:f[1], s:[]}))).find(w => w.mon === thisMon);
+  const done = weekly[thisMon] || 0;
+  $("mKm").textContent = done.toFixed(1);
+  $("sKm").textContent = cur ? "of " + cur.km + " km target" : "no target set";
+
+  // --- session ladder -----------------------------------------------
+  const host = $("weeks"); host.innerHTML = "";
+  PLAN.forEach(w => {
+    const logged = weekly[w.mon] || 0;
+    const pct = Math.min(100, Math.round(logged / w.km * 100));
+    const sec = document.createElement("section"); sec.className = "wk";
+    sec.innerHTML = '<div class="wkhead"><span class="wklab">' + w.label + ' · ' + w.dates +
+      '</span><span class="wkkm">' + logged.toFixed(1) + ' / ' + w.km + ' km</span></div>' +
+      '<div class="bar' + (pct >= 100 ? ' g' : '') + '"><i style="width:' + pct + '%"></i></div>';
+    const ul = document.createElement("ul"); ul.className = "lad";
+    w.s.forEach(s => {
+      const ran = byDate[s.d];
+      const li = document.createElement("li"); if (ran) li.className = "on";
+      const dn = new Date(s.d).toLocaleDateString("en-GB",{weekday:"short",day:"numeric"});
+      li.innerHTML = '<span class="dot"></span><div class="day">' + dn + '</div><div style="flex:1;min-width:0">' +
+        '<div class="sess">' + s.t + (s.key ? ' <span class="key">key</span>' : '') + '</div>' +
+        '<div class="meta">' + (ran ? "Ran " + ran.toFixed(1) + " km" : s.m) + '</div></div>';
+      ul.append(li);
+    });
+    sec.append(ul); host.append(sec);
+  });
+
+  // --- chart --------------------------------------------------------
+  const allWeeks = PLAN.map(w => [w.mon, w.km]).concat(FUTURE);
+  const labels = allWeeks.map(w => new Date(w[0]).toLocaleDateString("en-GB",{day:"numeric",month:"short"}));
+  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+  new Chart($("volChart"), {
+    type: "bar",
+    data: { labels, datasets: [
+      { label:"Actual", data: allWeeks.map(w => Math.round((weekly[w[0]]||0)*10)/10),
+        backgroundColor:"#2a78d6", borderRadius:4, maxBarThickness:18, order:2 },
+      { label:"Target", type:"line", data: allWeeks.map(w => w[1]),
+        borderColor:"#eb6834", borderWidth:2, borderDash:[6,4], pointRadius:0, order:1 }
+    ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ labels:{ color: dark ? "#A2A8AF" : "#5E656C", boxWidth:10, boxHeight:10, font:{size:11} } } },
+      scales:{ y:{ beginAtZero:true, grid:{color: dark ? "#2C2C2A" : "#e1e0d9"},
+                   ticks:{color:"#898781", font:{size:11}, callback:(x)=>x+" km"} },
+               x:{ grid:{display:false}, ticks:{color:"#898781", font:{size:10}, maxRotation:60} } }
+    }
+  });
+
+  const g = new Date(data.generated);
+  $("stamp").textContent = "Last synced " + g.toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+}
+</script>
+</body>
+</html>
