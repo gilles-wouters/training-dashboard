@@ -3,90 +3,139 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Training block</title>
+<title>Training</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
   --paper:#F2F2EE; --card:#FBFBF9; --ink:#15181B; --mid:#5E656C; --faint:#9AA0A6;
-  --rule:#DBDBD4; --track:#B0232C; --moss:#3D6B49; --amber:#9C6400;
+  --rule:#DBDBD4; --track:#B0232C; --moss:#3D6B49; --amber:#9C6400; --blue:#2A6FB0;
   --mono:'IBM Plex Mono',ui-monospace,monospace; --sans:'Archivo',system-ui,sans-serif;
 }
 @media(prefers-color-scheme:dark){
   :root{--paper:#131417; --card:#1A1C20; --ink:#ECEBE6; --mid:#A2A8AF; --faint:#71777E;
-        --rule:#2B2E33; --track:#E0605F; --moss:#6FA97E; --amber:#D3A03C;}
+        --rule:#2B2E33; --track:#E0605F; --moss:#6FA97E; --amber:#D3A03C; --blue:#6CA9DE;}
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--paper)}
 body{color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;
-  padding:24px 18px 56px;max-width:820px;margin:0 auto;-webkit-font-smoothing:antialiased}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--faint);margin:0 0 8px}
-hr{height:1px;background:var(--rule);border:0;margin:28px 0}
-.card{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:16px 18px}
+  padding:24px 18px 60px;max-width:860px;margin:0 auto;-webkit-font-smoothing:antialiased}
 .n{font-family:var(--mono);font-variant-numeric:tabular-nums}
-.count{font-family:var(--mono);font-size:62px;line-height:.92;font-weight:600;letter-spacing:-.03em}
+hr{height:1px;background:var(--rule);border:0;margin:0}
+
+.screen{padding:30px 0}
+.screen + .screen{border-top:1px solid var(--rule)}
+.shead{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px}
+.stag{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
+.shint{font-size:12px;color:var(--faint)}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--faint);margin:22px 0 8px}
+
+/* header */
+.count{font-family:var(--mono);font-size:64px;line-height:.9;font-weight:600;letter-spacing:-.035em}
 .countsub{font-size:13px;color:var(--mid);margin-top:6px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
 .chip{font-family:var(--mono);font-size:11.5px;padding:4px 9px;border:1px solid var(--rule);
   border-radius:2px;color:var(--mid);background:var(--card)}
 .chip b{color:var(--ink);font-weight:600}
+
+/* alerts */
+.alerts{margin-top:20px;display:grid;gap:7px}
+.alert{display:flex;gap:10px;align-items:flex-start;background:var(--card);
+  border:1px solid var(--rule);border-left:3px solid var(--amber);padding:10px 13px;font-size:13.5px}
+.alert.red{border-left-color:var(--track)}
+.alert b{font-weight:500}
+.alert span.lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--faint);flex:0 0 74px;padding-top:3px}
+
+/* verdict + hero */
+.verdict{padding:13px 15px;font-size:14.5px;background:var(--card);
+  border:1px solid var(--rule);border-left:3px solid var(--rule)}
+.verdict.go{border-left-color:var(--moss);color:var(--moss)}
+.verdict.hold{border-left-color:var(--amber);color:var(--amber)}
+.verdict.stop{border-left-color:var(--track);color:var(--track)}
 .hero{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--track);padding:16px 18px}
 .herodate{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--track)}
 .herotitle{font-size:22px;font-weight:500;margin:5px 0 2px;letter-spacing:-.01em}
 .herodet{color:var(--mid);font-size:14px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:12px}
-.tile{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:13px 15px}
-.tlab{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
-.tval{font-family:var(--mono);font-size:25px;font-weight:600;margin-top:5px;letter-spacing:-.02em}
-.tsub{font-size:12.5px;color:var(--mid);margin-top:2px}
-.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:9px}
+
+/* tiles */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.tile{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:12px 14px;min-width:0}
+.tlab{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.tval{font-family:var(--mono);font-size:24px;font-weight:600;margin-top:5px;letter-spacing:-.02em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tsub{font-size:12px;color:var(--mid);margin-top:2px}
+.tval.good{color:var(--moss)} .tval.warn{color:var(--amber)} .tval.bad{color:var(--track)}
+.hero-num{font-family:var(--mono);font-size:52px;font-weight:600;letter-spacing:-.03em;line-height:1}
+
+/* bars */
+.bar{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-top:8px}
 .bar i{display:block;height:100%;background:var(--track);border-radius:3px}
 .bar.g i{background:var(--moss)}
-.verdict{margin-top:0;padding:12px 14px;border-radius:2px;font-size:14px;
-  border-left:3px solid var(--rule);background:var(--card);border-top:1px solid var(--rule);
-  border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.verdict.go{border-left-color:var(--moss);color:var(--moss)}
-.verdict.hold{border-left-color:var(--amber);color:var(--amber)}
-.verdict.stop{border-left-color:var(--track);color:var(--track)}
-ul.lad{list-style:none;margin:10px 0 0;padding:0}
-ul.lad li{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--rule)}
+.bar.b i{background:var(--blue)}
+
+/* ladder */
+ul.lad{list-style:none;margin:8px 0 0;padding:0}
+ul.lad li{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--rule)}
 ul.lad li:first-child{border-top:0}
-.day{font-family:var(--mono);font-size:11.5px;letter-spacing:.05em;color:var(--faint);
-  width:58px;flex:0 0 58px;padding-top:3px;text-transform:uppercase}
-.sess{font-size:14.5px}
-.meta{font-size:12.5px;color:var(--mid);margin-top:2px}
-.key{color:var(--track);font-family:var(--mono);font-size:12px}
+.dot{flex:0 0 9px;width:9px;height:9px;border-radius:50%;margin-top:7px;background:var(--rule)}
+li.on .dot{background:var(--moss)}
+li.miss .dot{background:var(--track)}
+.day{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--faint);
+  width:54px;flex:0 0 54px;padding-top:2px;text-transform:uppercase}
+.sess{font-size:14px}
+.meta{font-size:12.5px;color:var(--mid);margin-top:1px}
+.key{color:var(--track);font-family:var(--mono);font-size:11.5px}
 li.on .sess{color:var(--faint);text-decoration:line-through}
-li.on .meta{color:var(--faint)}
-.dot{flex:0 0 9px;width:9px;height:9px;border-radius:50%;margin-top:8px;
-  background:var(--rule);border:1px solid var(--rule)}
-li.on .dot{background:var(--moss);border-color:var(--moss)}
-.wk{margin-top:26px}
+.wk{margin-top:22px}
 .wkhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
-.wklab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.wklab{font-family:var(--mono);font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
 .wkkm{font-family:var(--mono);font-size:12.5px;color:var(--mid);font-variant-numeric:tabular-nums}
-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:10px}
-th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+
+/* check-in */
+.checkin{background:var(--card);border:1px solid var(--rule);border-radius:3px;padding:15px 17px}
+.crow{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-end;margin-bottom:12px}
+.fld{display:flex;flex-direction:column;gap:5px}
+.flab{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+input,select{font-family:var(--mono);font-size:14px;padding:7px 9px;border:1px solid var(--rule);
+  border-radius:2px;background:var(--paper);color:var(--ink)}
+input:focus,select:focus{outline:2px solid var(--track);outline-offset:-1px}
+input[type=number]{width:82px}
+.btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;
+  padding:9px 16px;border:1px solid var(--ink);background:transparent;color:var(--ink);
+  border-radius:2px;cursor:pointer}
+.btn:hover{background:var(--ink);color:var(--paper)}
+.btn:active{transform:scale(.98)}
+.saved{font-family:var(--mono);font-size:11px;color:var(--moss);margin-left:12px}
+
+/* charts + tables */
+.chartwrap{position:relative;width:100%;height:250px;margin-top:10px}
+.chartwrap.tall{height:280px}
+.legend{display:flex;gap:15px;flex-wrap:wrap;font-size:12px;color:var(--mid);margin-top:8px}
+.legend span{display:flex;align-items:center;gap:5px}
+.sw{width:10px;height:10px;border-radius:2px;display:inline-block}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-top:8px}
+th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
   color:var(--faint);font-weight:400;padding:0 0 7px;border-bottom:1px solid var(--rule)}
 td{padding:8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
-.chartwrap{position:relative;width:100%;height:230px;margin-top:12px}
+.note{font-size:12.5px;color:var(--mid);margin-top:9px}
 .stamp{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--faint);margin-top:32px}
-.err{border-left:3px solid var(--track);background:var(--card);padding:13px 15px;font-size:14px;
-  border-top:1px solid var(--rule);border-right:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-@media(max-width:520px){
-  body{padding:18px 14px 40px}
-  .count{font-size:46px}
-  .day{width:48px;flex:0 0 48px;font-size:10.5px}
-  .herotitle{font-size:19px}
+  color:var(--faint);margin-top:34px}
+.err{border:1px solid var(--rule);border-left:3px solid var(--track);background:var(--card);
+  padding:13px 15px;font-size:14px;margin-top:18px}
+@media(max-width:540px){
+  body{padding:18px 14px 44px}
+  .count{font-size:46px} .hero-num{font-size:40px}
+  .day{width:46px;flex:0 0 46px} .herotitle{font-size:19px}
+  .grid{grid-template-columns:repeat(auto-fit,minmax(125px,1fr));gap:8px}
 }
 </style>
 </head>
 <body>
 
-<p class="eyebrow" id="blockLabel">Block 1 · rebuild</p>
+<!-- ═══════════ HEADER ═══════════ -->
 <div class="count" id="cd">—</div>
 <div class="countsub">days to 31 December</div>
 <div class="chips">
@@ -94,62 +143,150 @@ td{padding:8px 0;border-bottom:1px solid var(--rule);vertical-align:top}
   <span class="chip">10K <b>49:18</b> → <b>42:00</b></span>
   <span class="chip">HALF <b>1:43</b> → spring 2027</span>
 </div>
-
+<div class="alerts" id="alerts"></div>
 <div id="banner"></div>
 
-<hr>
+<!-- ═══════════ SCREEN 1 · TODAY ═══════════ -->
+<section class="screen">
+  <div class="shead"><span class="stag">Today</span><span class="shint">check daily</span></div>
 
-<p class="eyebrow">Next up</p>
-<div class="hero">
-  <div class="herodate" id="hDate">—</div>
-  <div class="herotitle" id="hTitle">Loading</div>
-  <div class="herodet" id="hDet">Reading your latest data</div>
-</div>
+  <div class="verdict" id="verdict">Waiting for wellness data</div>
 
-<hr>
+  <p class="eyebrow">Next session</p>
+  <div class="hero">
+    <div class="herodate" id="hDate">—</div>
+    <div class="herotitle" id="hTitle">Loading</div>
+    <div class="herodet" id="hDet">Reading your latest data</div>
+  </div>
 
-<p class="eyebrow">This morning</p>
-<div class="verdict" id="verdict">Waiting for wellness data</div>
-<div class="grid">
-  <div class="tile"><div class="tlab">Overnight HRV</div><div class="tval n" id="mHrv">—</div><div class="tsub" id="sHrv">baseline 57</div></div>
-  <div class="tile"><div class="tlab">Resting HR</div><div class="tval n" id="mRhr">—</div><div class="tsub" id="sRhr">baseline 49</div></div>
-  <div class="tile"><div class="tlab">Fitness (CTL)</div><div class="tval n" id="mCtl">—</div><div class="tsub" id="sCtl">chronic load</div></div>
-  <div class="tile"><div class="tlab">This week</div><div class="tval n" id="mKm">—</div><div class="tsub" id="sKm">against target</div></div>
-</div>
+  <p class="eyebrow">Readiness</p>
+  <div class="grid">
+    <div class="tile"><div class="tlab">HRV</div><div class="tval n" id="mHrv">—</div><div class="tsub" id="sHrv">vs 30-day baseline</div></div>
+    <div class="tile"><div class="tlab">Resting HR</div><div class="tval n" id="mRhr">—</div><div class="tsub" id="sRhr">vs 30-day baseline</div></div>
+    <div class="tile"><div class="tlab">Sleep last night</div><div class="tval n" id="mSleep">—</div><div class="tsub" id="sSleep">hours</div></div>
+    <div class="tile"><div class="tlab">Sleep, 7 nights</div><div class="tval n" id="mSleep7">—</div><div class="tsub">average, target 7.5+</div></div>
+  </div>
 
-<hr>
+  <p class="eyebrow">Daily check-in</p>
+  <div class="checkin">
+    <div class="crow">
+      <div class="fld"><label class="flab" for="niggle">Niggle</label>
+        <select id="niggle">
+          <option value="">none</option>
+          <option>calf</option><option>achilles</option><option>knee</option>
+          <option>hamstring</option><option>hip</option><option>shin</option>
+          <option>foot</option><option>ITB</option><option>back</option><option>other</option>
+        </select></div>
+      <div class="fld"><label class="flab" for="nscore">Severity 0–3</label>
+        <input type="number" id="nscore" min="0" max="3" step="1" placeholder="0"></div>
+      <div class="fld"><label class="flab" for="rpe">Session RPE 1–10</label>
+        <input type="number" id="rpe" min="1" max="10" step="1" placeholder="5"></div>
+      <div class="fld"><label class="flab" for="wt">Weight kg</label>
+        <input type="number" id="wt" step="0.1" placeholder="70.0"></div>
+      <div class="fld"><label class="flab" for="strength">Strength done</label>
+        <select id="strength"><option value="">no</option><option value="1">yes</option></select></div>
+    </div>
+    <button class="btn" id="saveLog">Save today</button><span class="saved" id="savedMsg"></span>
+    <p class="note" id="niggleTrend">Logged in this browser only. Takes ten seconds and catches more than any sensor.</p>
+  </div>
+</section>
 
-<p class="eyebrow">Weekly volume, planned against actual</p>
-<div class="chartwrap"><canvas id="volChart" role="img" aria-label="Weekly running volume, planned target against actual kilometres run."></canvas></div>
+<!-- ═══════════ SCREEN 2 · THIS WEEK ═══════════ -->
+<section class="screen">
+  <div class="shead"><span class="stag">This week</span><span class="shint">consistency beats heroics</span></div>
 
-<hr>
+  <div class="grid">
+    <div class="tile"><div class="tlab">Sessions</div><div class="tval n" id="mSess">—</div><div class="tsub">completed of planned</div></div>
+    <div class="tile"><div class="tlab">Key sessions</div><div class="tval n" id="mKey">—</div><div class="tsub">the ones that matter</div></div>
+    <div class="tile"><div class="tlab">Easy share</div><div class="tval n" id="mEasy">—</div><div class="tsub">target above 80%</div></div>
+    <div class="tile"><div class="tlab">Volume</div><div class="tval n" id="mKm">—</div><div class="tsub" id="sKm">against target</div></div>
+    <div class="tile"><div class="tlab">Since rest day</div><div class="tval n" id="mRest">—</div><div class="tsub">consecutive run days</div></div>
+  </div>
 
-<p class="eyebrow">Sessions</p>
-<div id="weeks"></div>
+  <p class="eyebrow">Plan</p>
+  <div id="weeks"></div>
+</section>
 
-<hr>
+<!-- ═══════════ SCREEN 3 · THIS BLOCK ═══════════ -->
+<section class="screen">
+  <div class="shead"><span class="stag">This block</span><span class="shint">is the training working</span></div>
 
-<p class="eyebrow">Paces</p>
-<table>
-  <thead><tr><th style="width:34%">Effort</th><th style="width:33%">Pace</th><th style="width:33%">Heart rate</th></tr></thead>
-  <tbody>
-    <tr><td>Easy</td><td class="n">5:55–6:10</td><td class="n">under 145</td></tr>
-    <tr><td>Steady</td><td class="n">5:25–5:35</td><td class="n">150–158</td></tr>
-    <tr><td>Threshold</td><td class="n">~4:50</td><td class="n">168–175</td></tr>
-    <tr><td>Strides</td><td class="n">~3:50 feel</td><td class="n">not measured</td></tr>
-  </tbody>
-</table>
+  <p class="eyebrow">Aerobic efficiency · equivalent pace at 145 bpm</p>
+  <div class="chartwrap tall"><canvas id="effChart" role="img" aria-label="Aerobic efficiency over time, shown as the pace you could hold at 145 beats per minute. Lower is fitter."></canvas></div>
+  <div class="legend"><span><i class="sw" style="background:#2a78d6"></i>Each easy run</span><span><i class="sw" style="background:#eb6834"></i>5-run rolling average</span></div>
+  <p class="note">The most useful number here. It strips out weather, terrain and mood by asking one question: how fast can you run for a given heart rate? Downward is fitter. Only easy runs over 5 km with an average heart rate between 130 and 158 are plotted, so the comparison stays fair.</p>
+
+  <div class="grid" style="margin-top:20px">
+    <div class="tile"><div class="tlab">Efficiency change</div><div class="tval n" id="mEffDelta">—</div><div class="tsub">last 5 vs previous 5</div></div>
+    <div class="tile"><div class="tlab">Decoupling</div><div class="tval n" id="mDecoup">—</div><div class="tsub">long runs, under 5% good</div></div>
+    <div class="tile"><div class="tlab">Fitness (CTL)</div><div class="tval n" id="mCtl">—</div><div class="tsub" id="sCtl">chronic load</div></div>
+    <div class="tile"><div class="tlab">Load ratio</div><div class="tval n" id="mAcwr">—</div><div class="tsub">safe zone 0.8–1.3</div></div>
+    <div class="tile"><div class="tlab">Longest run</div><div class="tval n" id="mLong">—</div><div class="tsub">last 8 weeks</div></div>
+    <div class="tile"><div class="tlab">Cadence</div><div class="tval n" id="mCad">—</div><div class="tsub" id="sCad">steps per minute</div></div>
+  </div>
+
+  <p class="eyebrow">Fitness and fatigue</p>
+  <div class="chartwrap"><canvas id="loadChart" role="img" aria-label="Chronic training load (fitness) and acute training load (fatigue) over the past six months."></canvas></div>
+  <div class="legend"><span><i class="sw" style="background:#2a78d6"></i>Fitness (CTL)</span><span><i class="sw" style="background:#eb6834"></i>Fatigue (ATL)</span></div>
+
+  <p class="eyebrow">Weekly volume, planned against actual</p>
+  <div class="chartwrap"><canvas id="volChart" role="img" aria-label="Weekly running volume, planned target against actual kilometres."></canvas></div>
+  <div class="legend"><span><i class="sw" style="background:#2a78d6"></i>Actual</span><span><i class="sw" style="background:#eb6834"></i>Target</span></div>
+</section>
+
+<!-- ═══════════ SCREEN 4 · THIS YEAR ═══════════ -->
+<section class="screen">
+  <div class="shead"><span class="stag">This year</span><span class="shint">check monthly</span></div>
+
+  <div style="display:flex;gap:26px;flex-wrap:wrap;align-items:flex-end;margin-bottom:6px">
+    <div><div class="tlab">Consistency</div><div class="hero-num" id="mConsist">—</div>
+      <div class="tsub">of weeks with 4+ runs since 1 March</div></div>
+    <div><div class="tlab">Kilometres this year</div><div class="hero-num n" id="mYtd">—</div>
+      <div class="tsub" id="sYtd">against annual target</div></div>
+  </div>
+  <div class="bar b" id="ytdBar"><i style="width:0%"></i></div>
+
+  <p class="eyebrow">Resting HR and HRV · 90 days</p>
+  <div class="chartwrap"><canvas id="wellChart" role="img" aria-label="Resting heart rate and heart rate variability over the last 90 days."></canvas></div>
+  <div class="legend"><span><i class="sw" style="background:#eb6834"></i>Resting HR (bpm)</span><span><i class="sw" style="background:#2a78d6"></i>HRV (ms)</span></div>
+  <p class="note">Ignore the daily wobble entirely at this scale. What matters is the direction of the two lines over months: resting HR drifting down and HRV drifting up is what a year of good training looks like.</p>
+
+  <div class="grid" style="margin-top:20px">
+    <div class="tile"><div class="tlab">Resting HR trend</div><div class="tval n" id="mRhrTrend">—</div><div class="tsub">90-day change</div></div>
+    <div class="tile"><div class="tlab">HRV trend</div><div class="tval n" id="mHrvTrend">—</div><div class="tsub">90-day change</div></div>
+    <div class="tile"><div class="tlab">VO2 max</div><div class="tval n" id="mVo2">—</div><div class="tsub">slow moving, heat sensitive</div></div>
+    <div class="tile"><div class="tlab">Strength sessions</div><div class="tval n" id="mStrength">—</div><div class="tsub">logged, last 8 weeks</div></div>
+  </div>
+</section>
+
+<!-- ═══════════ REFERENCE ═══════════ -->
+<section class="screen">
+  <div class="shead"><span class="stag">Paces</span></div>
+  <table>
+    <thead><tr><th style="width:34%">Effort</th><th style="width:33%">Pace</th><th style="width:33%">Heart rate</th></tr></thead>
+    <tbody>
+      <tr><td>Easy</td><td class="n">5:55–6:10</td><td class="n">under 145</td></tr>
+      <tr><td>Steady</td><td class="n">5:25–5:35</td><td class="n">150–158</td></tr>
+      <tr><td>Threshold</td><td class="n">~4:50</td><td class="n">168–175</td></tr>
+      <tr><td>Strides</td><td class="n">~3:50 feel</td><td class="n">not measured</td></tr>
+    </tbody>
+  </table>
+  <p class="note">Threshold at the Étangs runs on heart rate, not pace. The loop rolls, so let the pace wander.</p>
+</section>
 
 <p class="stamp" id="stamp">&nbsp;</p>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-/* ------------------------------------------------------------------
-   THE PLAN. This is the only part you edit by hand.
-   Each week: monday date, target km, and the sessions.
-   A session counts as done when a run appears in your Garmin data
-   on that date, so there is nothing to tick.
-   ------------------------------------------------------------------ */
+/* ══════════════════════════════════════════════════════════════════
+   SETTINGS — the only part you edit by hand.
+   ══════════════════════════════════════════════════════════════════ */
+
+const ANNUAL_KM_TARGET = 2000;      // your 2026 volume goal
+const CONSISTENCY_FROM = "2026-03-01";
+const EASY_HR_CEILING  = 150;       // runs averaging below this count as easy
+const REF_HR           = 145;       // efficiency is normalised to this heart rate
+
 const PLAN = [
  {mon:"2026-08-10", km:42, label:"Week 1", dates:"10–16 Aug", s:[
    {d:"2026-08-16", t:"15 km long run", m:"Bois de la Cambre · early · HR cap 145"}]},
@@ -179,7 +316,7 @@ const PLAN = [
    {d:"2026-09-13", t:"5k time trial", m:"Cinquantenaire · measure a lap first", key:1}]}
 ];
 
-// Targets for the rest of the year. Refine these after the 13 Sep time trial.
+// Weekly targets after block 1. Refine these after the 13 September time trial.
 const FUTURE = [
  ["2026-09-14",52],["2026-09-21",56],["2026-09-28",60],["2026-10-05",46],
  ["2026-10-12",58],["2026-10-19",62],["2026-10-26",50],["2026-11-02",62],
@@ -187,39 +324,168 @@ const FUTURE = [
  ["2026-12-07",50],["2026-12-14",45],["2026-12-21",40]
 ];
 
-const BASE_HRV = 57, BASE_RHR = 49;
+/* ══════════════════════════════════════════════════════════════════
+   Everything below is machinery.
+   ══════════════════════════════════════════════════════════════════ */
 
 const $ = (id) => document.getElementById(id);
-const iso = (d) => d.toISOString().slice(0,10);
-function monday(d){const x=new Date(d);const g=(x.getDay()+6)%7;x.setDate(x.getDate()-g);x.setHours(0,0,0,0);return x;}
+const iso = (d) => new Date(d).toISOString().slice(0,10);
+const todayISO = iso(new Date());
+const mono = (v,d=0) => v==null||!isFinite(v) ? "—" : Number(v).toFixed(d);
+const mmss = (secs) => secs==null||!isFinite(secs) ? "—" :
+  Math.floor(secs/60) + ":" + String(Math.round(secs%60)).padStart(2,"0");
+function monday(d){const x=new Date(d);const g=(x.getDay()+6)%7;x.setDate(x.getDate()-g);x.setHours(12,0,0,0);return iso(x);}
+const mean = (a) => a.length ? a.reduce((s,x)=>s+x,0)/a.length : null;
+const dark = matchMedia("(prefers-color-scheme: dark)").matches;
+const GRID = dark ? "#2C2C2A" : "#e1e0d9";
+const TICK = "#898781";
 
-$("cd").textContent = Math.max(0, Math.round((new Date("2026-12-31T00:00:00") - new Date().setHours(0,0,0,0))/864e5));
+$("cd").textContent = Math.max(0, Math.round((new Date("2026-12-31T00:00:00") - new Date(todayISO))/864e5));
 
+/* ---------- manual log, stored in this browser ---------- */
+const LOGKEY = "gw-log-v2";
+const readLog = () => { try { return JSON.parse(localStorage.getItem(LOGKEY)) || {}; } catch(e){ return {}; } };
+const writeLog = (o) => { try { localStorage.setItem(LOGKEY, JSON.stringify(o)); } catch(e){} };
+
+(function primeLog(){
+  const log = readLog(), t = log[todayISO];
+  if (!t) return;
+  if (t.niggle) $("niggle").value = t.niggle;
+  if (t.nscore != null) $("nscore").value = t.nscore;
+  if (t.rpe != null) $("rpe").value = t.rpe;
+  if (t.weight != null) $("wt").value = t.weight;
+  if (t.strength) $("strength").value = "1";
+})();
+
+$("saveLog").onclick = () => {
+  const log = readLog();
+  log[todayISO] = {
+    niggle: $("niggle").value || null,
+    nscore: $("nscore").value === "" ? null : Number($("nscore").value),
+    rpe: $("rpe").value === "" ? null : Number($("rpe").value),
+    weight: $("wt").value === "" ? null : Number($("wt").value),
+    strength: $("strength").value === "1"
+  };
+  writeLog(log);
+  $("savedMsg").textContent = "Saved";
+  setTimeout(()=>{ $("savedMsg").textContent = ""; }, 2000);
+  niggleCheck();
+};
+
+function niggleCheck(){
+  const log = readLog();
+  const streaks = {};
+  let run = null;
+  for (let i = 0; i < 21; i++){
+    const d = new Date(); d.setDate(d.getDate() - i);
+    const e = log[iso(d)];
+    if (e && e.niggle && e.nscore >= 2){
+      if (!run || run.part !== e.niggle) run = { part: e.niggle, days: 0 };
+      run.days++;
+      streaks[e.niggle] = Math.max(streaks[e.niggle] || 0, run.days);
+    } else { run = null; }
+  }
+  const bad = Object.entries(streaks).filter(([,d]) => d >= 4);
+  const el = $("niggleTrend");
+  if (bad.length){
+    el.style.color = "var(--track)";
+    el.textContent = bad.map(([p,d]) => p + " has been a 2 or worse for " + d + " days").join("; ") +
+      ". That is no longer a niggle. Rest it or get it looked at.";
+  } else {
+    el.style.color = "";
+    el.textContent = "Logged in this browser only. Takes ten seconds and catches more than any sensor.";
+  }
+}
+niggleCheck();
+
+/* ---------- load and render ---------- */
 fetch("./data.json?t=" + Date.now())
   .then(r => { if(!r.ok) throw new Error("data.json not found"); return r.json(); })
   .then(render)
   .catch(e => {
-    $("banner").innerHTML = '<div class="err" style="margin-top:20px">No data yet. Open the <b>Actions</b> tab in your repository and run <b>Update training data</b> manually. If it fails, the log will say why.</div>';
+    $("banner").innerHTML = '<div class="err">No data yet. Open the <b>Actions</b> tab in your repository and run <b>Update training data</b> manually. If it fails, the log will say why.</div>';
     $("hTitle").textContent = "Waiting for first sync";
     $("hDet").textContent = e.message;
   });
 
 function render(data){
-  const acts = data.activities || [];
+  const acts = (data.activities || []).filter(a => a.isRun !== false);
   const well = data.wellness || [];
-  const byDate = {};
-  acts.forEach(a => { byDate[a.date] = (byDate[a.date] || 0) + a.km; });
+  const log = readLog();
+  const alerts = [];
 
-  // --- next session -------------------------------------------------
-  const today = iso(new Date());
+  const byDate = {}, minsByDate = {};
+  acts.forEach(a => {
+    byDate[a.date] = (byDate[a.date] || 0) + a.km;
+    minsByDate[a.date] = (minsByDate[a.date] || 0) + (a.minutes || 0);
+  });
+  const weekly = {};
+  acts.forEach(a => { const k = monday(a.date); weekly[k] = (weekly[k]||0) + a.km; });
+
+  /* ═══ SCREEN 1 · TODAY ═══ */
+
+  // rolling baselines from the person's own data, not fixed numbers
+  const recent = (key, days, skip=0) => well
+    .filter(w => w[key] != null)
+    .slice(skip, skip + days)
+    .map(w => w[key]);
+  const hrvBase = mean(recent("hrv", 30, 1));
+  const rhrBase = mean(recent("rhr", 30, 1));
+
+  const latest = well.find(w => w.hrv != null || w.rhr != null) || {};
+  const hrv = latest.hrv, rhr = latest.rhr;
+
+  if (hrv != null){
+    $("mHrv").textContent = Math.round(hrv);
+    if (hrvBase){ const d = hrv - hrvBase;
+      $("sHrv").textContent = (d>=0?"+":"") + d.toFixed(0) + " vs baseline " + hrvBase.toFixed(0);
+      $("mHrv").className = "tval n " + (d < -8 ? "bad" : d < -4 ? "warn" : "good"); }
+  }
+  if (rhr != null){
+    $("mRhr").textContent = Math.round(rhr);
+    if (rhrBase){ const d = rhr - rhrBase;
+      $("sRhr").textContent = (d>=0?"+":"") + d.toFixed(0) + " vs baseline " + rhrBase.toFixed(0);
+      $("mRhr").className = "tval n " + (d > 4 ? "bad" : d > 2 ? "warn" : "good"); }
+  }
+
+  const sleepLast = well.find(w => w.sleepHours != null);
+  if (sleepLast){
+    $("mSleep").textContent = sleepLast.sleepHours.toFixed(1);
+    $("sSleep").textContent = sleepLast.date === todayISO ? "hours, last night" : "hours, " + sleepLast.date;
+    $("mSleep").className = "tval n " + (sleepLast.sleepHours < 6.5 ? "bad" : sleepLast.sleepHours < 7.2 ? "warn" : "good");
+  }
+  const sleep7 = mean(recent("sleepHours", 7));
+  if (sleep7 != null){
+    $("mSleep7").textContent = sleep7.toFixed(1);
+    $("mSleep7").className = "tval n " + (sleep7 < 6.8 ? "bad" : sleep7 < 7.3 ? "warn" : "good");
+    if (sleep7 < 7) alerts.push(["Sleep", "Seven-night average is " + sleep7.toFixed(1) + " hours. This is the lever with the largest effect on everything else here.", 0]);
+  }
+
+  // verdict, using deviations rather than absolute thresholds
+  const v = $("verdict");
+  const hDev = (hrv != null && hrvBase) ? hrv - hrvBase : null;
+  const rDev = (rhr != null && rhrBase) ? rhr - rhrBase : null;
+  if (hDev == null && rDev == null){
+    v.textContent = "No wellness data yet. Check Garmin's sleep and wellness scopes on intervals.icu.";
+  } else if ((hDev != null && hDev < -8) || (rDev != null && rDev > 4)){
+    v.className = "verdict stop";
+    v.textContent = "Back off. Swap today's session for easy running, or rest entirely.";
+  } else if ((hDev != null && hDev < -4) || (rDev != null && rDev > 2) || (sleep7 != null && sleep7 < 6.8)){
+    v.className = "verdict hold";
+    v.textContent = "Run easy and hold the key session. Same reading tomorrow means take a rest day.";
+  } else {
+    v.className = "verdict go";
+    v.textContent = "Clear. Run the session as written.";
+  }
+
+  // next session
   let next = null;
   PLAN.forEach(w => w.s.forEach(s => {
-    if (byDate[s.d]) return;
-    if (s.d < today) return;
+    if (byDate[s.d] || s.d < todayISO) return;
     if (!next || s.d < next.d) next = s;
   }));
   if (next){
-    const diff = Math.round((new Date(next.d) - new Date(today))/864e5);
+    const diff = Math.round((new Date(next.d) - new Date(todayISO))/864e5);
     const rel = diff === 0 ? "Today" : diff === 1 ? "Tomorrow" : "In " + diff + " days";
     const dn = new Date(next.d).toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"});
     $("hDate").textContent = (dn + " · " + rel).toUpperCase();
@@ -231,40 +497,50 @@ function render(data){
     $("hDet").textContent = "Time to plan the next block.";
   }
 
-  // --- wellness -----------------------------------------------------
-  const latest = well.find(w => w.hrv != null || w.rhr != null);
-  const v = $("verdict");
-  if (latest){
-    const h = latest.hrv, r = latest.rhr;
-    if (h != null){ $("mHrv").textContent = Math.round(h);
-      $("sHrv").textContent = (h >= BASE_HRV ? "+" : "") + Math.round(h - BASE_HRV) + " vs baseline"; }
-    if (r != null){ $("mRhr").textContent = Math.round(r);
-      $("sRhr").textContent = (r >= BASE_RHR ? "+" : "") + Math.round(r - BASE_RHR) + " vs baseline"; }
-    if (latest.ctl != null) $("mCtl").textContent = Math.round(latest.ctl);
-    if (h != null && h < 45 || r != null && r >= 55){
-      v.className = "verdict stop";
-      v.textContent = "Swap today's session for easy running, or rest. This is the 6 August pattern.";
-    } else if (h != null && h < 50 || r != null && r >= 53){
-      v.className = "verdict hold";
-      v.textContent = "Run easy and hold the key session. Same reading tomorrow means take a rest day.";
-    } else {
-      v.className = "verdict go";
-      v.textContent = "Clear. Run the session as written.";
-    }
-  } else {
-    v.textContent = "No wellness data. Check that Garmin's sleep and wellness scopes are enabled in intervals.icu.";
+  /* ═══ SCREEN 2 · THIS WEEK ═══ */
+
+  const thisMon = monday(new Date());
+  const allTargets = PLAN.map(w => [w.mon, w.km]).concat(FUTURE);
+  const target = (allTargets.find(t => t[0] === thisMon) || [null,null])[1];
+  const curWeek = PLAN.find(w => w.mon === thisMon);
+  const doneKm = weekly[thisMon] || 0;
+
+  $("mKm").textContent = doneKm.toFixed(1);
+  $("sKm").textContent = target ? "of " + target + " km target" : "no target set";
+  if (target) $("mKm").className = "tval n " + (doneKm >= target*0.9 ? "good" : doneKm >= target*0.6 ? "warn" : "");
+
+  if (curWeek){
+    const planned = curWeek.s.length;
+    const done = curWeek.s.filter(s => byDate[s.d]).length;
+    const keys = curWeek.s.filter(s => s.key);
+    const keysDone = keys.filter(s => byDate[s.d]).length;
+    $("mSess").textContent = done + " / " + planned;
+    $("mKey").textContent = keys.length ? keysDone + " / " + keys.length : "—";
+    if (keys.length) $("mKey").className = "tval n " + (keysDone === keys.length ? "good" : "");
   }
 
-  // --- weekly totals ------------------------------------------------
-  const weekly = {};
-  acts.forEach(a => { const k = iso(monday(a.date)); weekly[k] = (weekly[k]||0) + a.km; });
-  const thisMon = iso(monday(new Date()));
-  const cur = PLAN.concat(FUTURE.map(f => ({mon:f[0], km:f[1], s:[]}))).find(w => w.mon === thisMon);
-  const done = weekly[thisMon] || 0;
-  $("mKm").textContent = done.toFixed(1);
-  $("sKm").textContent = cur ? "of " + cur.km + " km target" : "no target set";
+  // easy share: minutes on runs averaging below the ceiling, this week
+  const wkRuns = acts.filter(a => monday(a.date) === thisMon && a.hr != null && a.minutes);
+  const wkMins = wkRuns.reduce((s,a) => s + a.minutes, 0);
+  const easyMins = wkRuns.filter(a => a.hr < EASY_HR_CEILING).reduce((s,a) => s + a.minutes, 0);
+  if (wkMins > 0){
+    const pct = Math.round(easyMins / wkMins * 100);
+    $("mEasy").textContent = pct + "%";
+    $("mEasy").className = "tval n " + (pct >= 80 ? "good" : pct >= 65 ? "warn" : "bad");
+    if (pct < 65 && wkMins > 90) alerts.push(["Intensity", "Only " + pct + "% of this week's running minutes were easy. Too hard to recover from, too easy to adapt to.", 0]);
+  }
 
-  // --- session ladder -----------------------------------------------
+  // consecutive run days
+  let streak = 0;
+  for (let i = 0; i < 21; i++){
+    const d = new Date(); d.setDate(d.getDate() - i);
+    if (byDate[iso(d)]) streak++; else break;
+  }
+  $("mRest").textContent = streak;
+  $("mRest").className = "tval n " + (streak >= 7 ? "bad" : streak >= 5 ? "warn" : "");
+  if (streak >= 7) alerts.push(["Rest", streak + " consecutive days of running. Take one off.", 1]);
+
+  // ladder
   const host = $("weeks"); host.innerHTML = "";
   PLAN.forEach(w => {
     const logged = weekly[w.mon] || 0;
@@ -276,38 +552,200 @@ function render(data){
     const ul = document.createElement("ul"); ul.className = "lad";
     w.s.forEach(s => {
       const ran = byDate[s.d];
-      const li = document.createElement("li"); if (ran) li.className = "on";
+      const missed = !ran && s.d < todayISO;
+      const li = document.createElement("li");
+      li.className = ran ? "on" : missed ? "miss" : "";
       const dn = new Date(s.d).toLocaleDateString("en-GB",{weekday:"short",day:"numeric"});
+      const rpeToday = log[s.d] && log[s.d].rpe != null ? " · RPE " + log[s.d].rpe : "";
       li.innerHTML = '<span class="dot"></span><div class="day">' + dn + '</div><div style="flex:1;min-width:0">' +
         '<div class="sess">' + s.t + (s.key ? ' <span class="key">key</span>' : '') + '</div>' +
-        '<div class="meta">' + (ran ? "Ran " + ran.toFixed(1) + " km" : s.m) + '</div></div>';
+        '<div class="meta">' + (ran ? "Ran " + ran.toFixed(1) + " km" + rpeToday : missed ? "Missed" : s.m) + '</div></div>';
       ul.append(li);
     });
     sec.append(ul); host.append(sec);
   });
 
-  // --- chart --------------------------------------------------------
-  const allWeeks = PLAN.map(w => [w.mon, w.km]).concat(FUTURE);
-  const labels = allWeeks.map(w => new Date(w[0]).toLocaleDateString("en-GB",{day:"numeric",month:"short"}));
-  const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-  new Chart($("volChart"), {
-    type: "bar",
-    data: { labels, datasets: [
-      { label:"Actual", data: allWeeks.map(w => Math.round((weekly[w[0]]||0)*10)/10),
-        backgroundColor:"#2a78d6", borderRadius:4, maxBarThickness:18, order:2 },
-      { label:"Target", type:"line", data: allWeeks.map(w => w[1]),
-        borderColor:"#eb6834", borderWidth:2, borderDash:[6,4], pointRadius:0, order:1 }
-    ]},
-    options: { responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{ labels:{ color: dark ? "#A2A8AF" : "#5E656C", boxWidth:10, boxHeight:10, font:{size:11} } } },
-      scales:{ y:{ beginAtZero:true, grid:{color: dark ? "#2C2C2A" : "#e1e0d9"},
-                   ticks:{color:"#898781", font:{size:11}, callback:(x)=>x+" km"} },
-               x:{ grid:{display:false}, ticks:{color:"#898781", font:{size:10}, maxRotation:60} } }
-    }
+  /* ═══ SCREEN 3 · THIS BLOCK ═══ */
+
+  // aerobic efficiency: equivalent pace at REF_HR, from metres per heartbeat
+  const eff = acts
+    .filter(a => a.metresPerBeat && a.km >= 5 && a.hr >= 130 && a.hr <= 158)
+    .map(a => ({ date: a.date, sec: 1000 / (a.metresPerBeat * REF_HR) * 60 }))
+    .sort((x,y) => x.date < y.date ? -1 : 1);
+
+  const roll = eff.map((_, i) => {
+    const w = eff.slice(Math.max(0, i-4), i+1);
+    return mean(w.map(e => e.sec));
   });
 
+  if (eff.length >= 4){
+    const last5 = mean(eff.slice(-5).map(e => e.sec));
+    const prev5 = mean(eff.slice(-10, -5).map(e => e.sec));
+    if (prev5){
+      const d = last5 - prev5;
+      $("mEffDelta").textContent = (d <= 0 ? "−" : "+") + mmss(Math.abs(d)).replace(/^0:/, "");
+      $("mEffDelta").className = "tval n " + (d < -2 ? "good" : d > 4 ? "bad" : "");
+    }
+  }
+
+  new Chart($("effChart"), {
+    type: "line",
+    data: { labels: eff.map(e => new Date(e.date).toLocaleDateString("en-GB",{day:"numeric",month:"short"})),
+      datasets: [
+        { data: eff.map(e => e.sec), borderColor:"transparent", backgroundColor:"#2a78d6",
+          pointRadius:4, pointStyle:"circle", showLine:false },
+        { data: roll, borderColor:"#eb6834", borderWidth:2, pointRadius:0, tension:.3 }
+      ]},
+    options: { responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(i)=> mmss(i.parsed.y) + " /km at " + REF_HR + " bpm" } } },
+      scales:{ y:{ reverse:true, grid:{color:GRID},
+                   ticks:{color:TICK, font:{size:11}, callback:(x)=>mmss(x)} },
+               x:{ grid:{display:false}, ticks:{color:TICK, font:{size:10}, maxRotation:60, autoSkip:true, maxTicksLimit:12} } } }
+  });
+
+  const longs = acts.filter(a => a.km >= 12 && a.decoupling != null).slice(0, 5);
+  if (longs.length){
+    const dc = mean(longs.map(a => a.decoupling));
+    $("mDecoup").textContent = dc.toFixed(1) + "%";
+    $("mDecoup").className = "tval n " + (dc < 5 ? "good" : dc < 10 ? "warn" : "bad");
+  } else { $("sCtl").textContent = "chronic load"; }
+
+  const lw = well.find(w => w.ctl != null);
+  if (lw){
+    $("mCtl").textContent = Math.round(lw.ctl);
+    if (lw.atl != null && lw.ctl > 5){
+      const acwr = lw.atl / lw.ctl;
+      $("mAcwr").textContent = acwr.toFixed(2);
+      $("mAcwr").className = "tval n " + (acwr >= 0.8 && acwr <= 1.3 ? "good" : acwr > 1.5 ? "bad" : "warn");
+      if (acwr > 1.5) alerts.push(["Load", "Load ratio is " + acwr.toFixed(2) + ". You are ramping faster than your base supports.", 1]);
+      if (acwr < 0.8 && lw.ctl > 15) alerts.push(["Load", "Load ratio is " + acwr.toFixed(2) + ", which means you are detraining rather than building.", 0]);
+    }
+    if (lw.ctl < 15) $("sCtl").textContent = "still building, read with caution";
+  }
+
+  const eightWeeks = iso(new Date(Date.now() - 56*864e5));
+  const recentRuns = acts.filter(a => a.date >= eightWeeks);
+  const longest = Math.max(0, ...recentRuns.map(a => a.km));
+  if (longest) $("mLong").textContent = longest.toFixed(1) + " km";
+
+  const cadNow = mean(recentRuns.slice(0,5).map(a => a.cadence).filter(Boolean));
+  const cadBase = mean(acts.map(a => a.cadence).filter(Boolean));
+  if (cadNow){
+    $("mCad").textContent = Math.round(cadNow);
+    if (cadBase){
+      const d = cadNow - cadBase;
+      $("sCad").textContent = (d>=0?"+":"") + d.toFixed(0) + " vs your average";
+      if (d < -3){ $("mCad").className = "tval n warn";
+        alerts.push(["Form", "Cadence is " + Math.abs(d).toFixed(0) + " steps below your average. Usually fatigue or form breaking down.", 0]); }
+    }
+  }
+
+  // fitness / fatigue chart
+  const wl = well.filter(w => w.ctl != null).slice(0, 180).reverse();
+  new Chart($("loadChart"), {
+    type: "line",
+    data: { labels: wl.map(w => new Date(w.date).toLocaleDateString("en-GB",{day:"numeric",month:"short"})),
+      datasets: [
+        { data: wl.map(w => w.ctl), borderColor:"#2a78d6", borderWidth:2, pointRadius:0, tension:.25,
+          fill:true, backgroundColor:"rgba(42,120,214,0.10)" },
+        { data: wl.map(w => w.atl), borderColor:"#eb6834", borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.25 }
+      ]},
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ y:{ beginAtZero:true, grid:{color:GRID}, ticks:{color:TICK, font:{size:11}} },
+               x:{ grid:{display:false}, ticks:{color:TICK, font:{size:10}, maxRotation:60, autoSkip:true, maxTicksLimit:10} } } }
+  });
+
+  // volume chart
+  new Chart($("volChart"), {
+    type: "bar",
+    data: { labels: allTargets.map(t => new Date(t[0]).toLocaleDateString("en-GB",{day:"numeric",month:"short"})),
+      datasets: [
+        { data: allTargets.map(t => Math.round((weekly[t[0]]||0)*10)/10), backgroundColor:"#2a78d6",
+          borderRadius:4, maxBarThickness:16, order:2 },
+        { type:"line", data: allTargets.map(t => t[1]), borderColor:"#eb6834", borderWidth:2,
+          borderDash:[6,4], pointRadius:0, order:1 }
+      ]},
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ y:{ beginAtZero:true, grid:{color:GRID}, ticks:{color:TICK, font:{size:11}, callback:(x)=>x+" km"} },
+               x:{ grid:{display:false}, ticks:{color:TICK, font:{size:10}, maxRotation:60} } } }
+  });
+
+  /* ═══ SCREEN 4 · THIS YEAR ═══ */
+
+  const startWeek = monday(CONSISTENCY_FROM);
+  const weeksElapsed = Math.max(1, Math.round((new Date(thisMon) - new Date(startWeek))/(7*864e5)));
+  const runsPerWeek = {};
+  acts.filter(a => a.date >= CONSISTENCY_FROM).forEach(a => {
+    const k = monday(a.date); runsPerWeek[k] = (runsPerWeek[k]||0) + 1;
+  });
+  const goodWeeks = Object.values(runsPerWeek).filter(n => n >= 4).length;
+  const consist = Math.round(goodWeeks / weeksElapsed * 100);
+  $("mConsist").textContent = consist + "%";
+  $("mConsist").style.color = consist >= 70 ? "var(--moss)" : consist >= 45 ? "var(--amber)" : "var(--track)";
+
+  const ytd = acts.filter(a => a.date >= "2026-01-01").reduce((s,a) => s + a.km, 0);
+  $("mYtd").textContent = Math.round(ytd);
+  const dayOfYear = Math.round((new Date(todayISO) - new Date("2026-01-01"))/864e5) + 1;
+  const onPace = ANNUAL_KM_TARGET * dayOfYear / 365;
+  $("sYtd").textContent = "of " + ANNUAL_KM_TARGET + " km · pace needs " + Math.round(onPace);
+  $("ytdBar").querySelector("i").style.width = Math.min(100, ytd/ANNUAL_KM_TARGET*100) + "%";
+
+  const w90 = well.filter(w => w.rhr != null || w.hrv != null).slice(0, 90).reverse();
+  new Chart($("wellChart"), {
+    type: "line",
+    data: { labels: w90.map(w => new Date(w.date).toLocaleDateString("en-GB",{day:"numeric",month:"short"})),
+      datasets: [
+        { data: w90.map(w => w.rhr), borderColor:"#eb6834", borderWidth:2, borderDash:[5,4], pointRadius:0, tension:.3, spanGaps:true },
+        { data: w90.map(w => w.hrv), borderColor:"#2a78d6", borderWidth:2, pointRadius:0, tension:.3, spanGaps:true }
+      ]},
+    options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}},
+      scales:{ y:{ grid:{color:GRID}, ticks:{color:TICK, font:{size:11}} },
+               x:{ grid:{display:false}, ticks:{color:TICK, font:{size:10}, maxRotation:60, autoSkip:true, maxTicksLimit:9} } } }
+  });
+
+  const rhrNow = mean(recent("rhr", 14)), rhrThen = mean(recent("rhr", 14, 76));
+  if (rhrNow && rhrThen){
+    const d = rhrNow - rhrThen;
+    $("mRhrTrend").textContent = (d>=0?"+":"") + d.toFixed(1);
+    $("mRhrTrend").className = "tval n " + (d < -0.5 ? "good" : d > 1.5 ? "warn" : "");
+  }
+  const hrvNow = mean(recent("hrv", 14)), hrvThen = mean(recent("hrv", 14, 76));
+  if (hrvNow && hrvThen){
+    const d = hrvNow - hrvThen;
+    $("mHrvTrend").textContent = (d>=0?"+":"") + d.toFixed(1);
+    $("mHrvTrend").className = "tval n " + (d > 1 ? "good" : d < -3 ? "warn" : "");
+  }
+
+  const vo = well.find(w => w.vo2max != null);
+  if (vo) $("mVo2").textContent = vo.vo2max.toFixed(1);
+
+  const strengthCount = Object.entries(log)
+    .filter(([d,e]) => d >= eightWeeks && e.strength).length;
+  $("mStrength").textContent = strengthCount;
+  $("mStrength").className = "tval n " + (strengthCount >= 12 ? "good" : strengthCount >= 6 ? "warn" : "bad");
+
+  /* ═══ ALERTS ═══ */
+  const rhr3 = recent("rhr", 3);
+  if (rhrBase && rhr3.length === 3 && rhr3.every(x => x > rhrBase + 3))
+    alerts.push(["Recovery", "Resting heart rate has been elevated three days running. Something is brewing: illness, poor sleep, or accumulated load.", 1]);
+
+  const last2 = [thisMon, monday(new Date(Date.now()-7*864e5))];
+  const under = last2.filter(m => { const t = (allTargets.find(x=>x[0]===m)||[])[1];
+    return t && (weekly[m]||0) < t*0.6; });
+  if (under.length === 2)
+    alerts.push(["Volume", "Two consecutive weeks under 60% of target. The plan only works if it happens.", 0]);
+
+  const wkLongest = Math.max(0, ...acts.filter(a => monday(a.date) === thisMon).map(a => a.km));
+  if (doneKm > 20 && wkLongest / doneKm > 0.35)
+    alerts.push(["Balance", Math.round(wkLongest/doneKm*100) + "% of this week's volume came from one run. Spread it out.", 0]);
+
+  $("alerts").innerHTML = alerts.map(a =>
+    '<div class="alert' + (a[2] ? ' red' : '') + '"><span class="lab">' + a[0] + '</span><div>' + a[1] + '</div></div>'
+  ).join("");
+
   const g = new Date(data.generated);
-  $("stamp").textContent = "Last synced " + g.toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"});
+  $("stamp").textContent = "Synced " + g.toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) +
+    " · " + acts.length + " runs, " + well.length + " wellness days";
 }
 </script>
 </body>
