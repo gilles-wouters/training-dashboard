@@ -76,6 +76,20 @@ const activities = (Array.isArray(rawActivities) ? rawActivities : [])
     // efficiency: it rises as you get fitter at the same effort.
     const mpb = hr && secs > 0 ? metres / (hr * (secs / 60)) : null;
 
+    // Garmin and Strava disagree about running cadence: some records report
+    // one foot (around 85), others both (around 170). Normalise upward so a
+    // single chart never mixes the two scales.
+    let cadence = num(pick(a, "average_cadence", "average_run_cadence"));
+    if (cadence && cadence < 120) cadence *= 2;
+
+    // Stride length in metres. Use the reported value when present, otherwise
+    // derive it: distance divided by total steps taken.
+    let strideM = num(pick(a, "average_stride_length", "icu_average_stride_length"));
+    if (strideM && strideM > 3) strideM /= 100;          // some sources report centimetres
+    if (!strideM && cadence && secs > 0 && metres > 0) {
+      strideM = metres / (cadence * (secs / 60));
+    }
+
     return {
       date: String(pick(a, "start_date_local", "start_date") || "").slice(0, 10),
       startLocal: pick(a, "start_date_local"),
@@ -88,11 +102,13 @@ const activities = (Array.isArray(rawActivities) ? rawActivities : [])
       hr,
       maxHr: num(pick(a, "max_heartrate")),
       metresPerBeat: mpb ? Math.round(mpb * 1000) / 1000 : null,
-      cadence: num(pick(a, "average_cadence", "average_run_cadence")),
+      cadence: cadence ? Math.round(cadence * 10) / 10 : null,
+      strideM: strideM ? Math.round(strideM * 1000) / 1000 : null,
       elevation: num(pick(a, "total_elevation_gain", "icu_elevation_gain")),
       load: num(pick(a, "icu_training_load", "training_load")),
       // Heart rate drift across the run. Under 5% means the aerobic base is
-      // holding. Above 10% means you outran it.
+      // holding. Above 10% means you outran it. Needs stream data, so it is
+      // null or zero for activities imported as summaries only.
       decoupling: num(pick(a, "decoupling", "icu_hr_pace_decoupling", "icu_decoupling")),
       rpe: num(pick(a, "perceived_exertion", "icu_rpe")),
       hrZoneSecs: Array.isArray(a?.icu_hr_zone_times) ? a.icu_hr_zone_times : null,

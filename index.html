@@ -117,45 +117,75 @@ tailwind.config = { darkMode:'media', theme:{ extend:{ fontFamily:{
     <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] bg-[#f97316]"></i>4-week average</span>
   </div>
   <div class="relative h-[220px] mb-3"><canvas id="volChart"></canvas></div>
-  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xl">
     No fixed target, because a target set in August is wrong by October. The orange line is your own four-week
     average, so the question becomes whether you are trending up, holding, or sliding.
     <b class="not-italic font-medium">Sustainable building looks like three weeks up, one week down, repeating.</b>
   </p>
+</section>
 
-  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Consistency · last 26 weeks</p>
-  <div id="heatmap" class="mb-2"></div>
-  <div class="flex items-center gap-2 text-[11px] text-zinc-400 dark:text-zinc-600 mb-3">
-    <span>less</span>
-    <i class="inline-block w-3 h-3 rounded-sm bg-zinc-100 dark:bg-zinc-900"></i>
-    <i class="inline-block w-3 h-3 rounded-sm bg-blue-200 dark:bg-blue-900"></i>
-    <i class="inline-block w-3 h-3 rounded-sm bg-blue-400 dark:bg-blue-700"></i>
-    <i class="inline-block w-3 h-3 rounded-sm bg-blue-600 dark:bg-blue-500"></i>
-    <span>more</span>
-  </div>
+<!-- ═════════ §5 CADENCE AND STRIDE ═════════ -->
+<section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
+  <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-6">§5&nbsp; Cadence and stride</h2>
+
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6 mb-4" id="tilesCadence"></div>
   <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
-    One square per day, darker means further. <b class="not-italic font-medium">Gaps matter more than peaks.</b>
-    A month of moderate squares beats two enormous weeks followed by a blank fortnight, and this is the one
-    picture that makes that impossible to argue with.
+    A note on targets, because this gets misreported constantly. <b class="not-italic font-medium">There is no universal
+    optimal cadence</b> — the famous 180 figure came from counting elite 5k runners at racing speed and does not
+    generalise. Height and leg length set your natural range, and at 187 cm yours sits legitimately lower than a
+    170 cm runner's. Weight barely enters into it. What the evidence does support is that nudging your own habitual
+    cadence up by 5 to 10% shortens your stride slightly, reduces braking force, and cuts load at the knee and hip.
+    So the number to chase is your own baseline plus 5%, not somebody else's 180.
   </p>
 
-  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Intensity distribution · minutes per week</p>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Cadence against pace · every run</p>
   <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
-    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-[#3b82f6]"></i>Easy</span>
-    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-[#f59e0b]"></i>Moderate</span>
-    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-[#e11d48]"></i>Hard</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-[7px] h-[7px] rounded-full bg-[#cbd5e1]"></i>Older</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-[7px] h-[7px] rounded-full bg-[#3b82f6]"></i>Recent</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-emerald-500/20"></i>Reference band for 187 cm</span>
   </div>
-  <div class="relative h-[220px] mb-3"><canvas id="intensityChart"></canvas></div>
+  <div class="relative h-[250px] mb-3"><canvas id="cadPaceChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
+    Cadence only means anything relative to speed — it should rise naturally as you run faster, so a single
+    number across all your runs hides more than it shows. <b class="not-italic font-medium">The shape you want is a clear
+    upward slope from left to right.</b> Flat means you are lengthening your stride to go faster instead of turning
+    over quicker, which is the pattern most associated with overstriding and heel braking. The green band is a
+    height-scaled guide, not a rule; sitting just below it while sloping correctly is fine.
+  </p>
+
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Cadence over time · easy runs only</p>
+  <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
+    <span class="flex items-center gap-1.5"><i class="inline-block w-[7px] h-[7px] rounded-full bg-[#3b82f6]"></i>Each run</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] bg-[#f97316]"></i>5-run average</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] border-t border-dashed border-emerald-500"></i>Your baseline +5%</span>
+  </div>
+  <div class="relative h-[230px] mb-3"><canvas id="cadTimeChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
+    Easy runs only, so pace variation does not muddy the trend. The dashed line is 5% above your own average
+    from the last three months — the target the injury literature actually supports.
+    <b class="not-italic font-medium">Move toward it over months, not weeks.</b> A sudden 10% jump feels awful, raises your
+    heart rate at the same pace, and usually gets abandoned. Two or three steps per minute a month sticks.
+    Practise it during strides, where it is easiest, and let it bleed into your easy running.
+  </p>
+
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Stride length against pace</p>
+  <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
+    <span class="flex items-center gap-1.5"><i class="inline-block w-[7px] h-[7px] rounded-full bg-[#3b82f6]"></i>Each run</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-emerald-500/20"></i>Reference band</span>
+  </div>
+  <div class="relative h-[240px] mb-3"><canvas id="strideChart"></canvas></div>
   <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xl">
-    <b class="not-italic font-medium">You want roughly 80% blue.</b> A wall of amber is the classic amateur trap:
-    every run too hard to recover from, none hard enough to force adaptation. Easy means an average below 150 bpm,
-    hard means 165 and above.
+    Stride length is not independent of cadence: at a given speed the two multiply to a constant, so shortening
+    one lengthens the other. <b class="not-italic font-medium">Expressed against your height, stride runs from roughly 0.52 of
+    your height at easy pace to about 0.72 at 5k pace.</b> Sitting well above the band at easy pace is the clearest
+    sign of overstriding, and it is also the cheapest thing on this page to fix — think about landing under your
+    hips rather than reaching out in front, and let the cadence do the work.
   </p>
 </section>
 
-<!-- ═════════ §5 AM I RECOVERING ═════════ -->
+<!-- ═════════ §6 AM I RECOVERING ═════════ -->
 <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
-  <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-6">§5&nbsp; Am I recovering?</h2>
+  <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-6">§6&nbsp; Am I recovering?</h2>
 
   <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Resting HR and HRV · 120 days</p>
   <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
@@ -191,9 +221,9 @@ tailwind.config = { darkMode:'media', theme:{ extend:{ fontFamily:{
   </p>
 </section>
 
-<!-- ═════════ §6 LOG ═════════ -->
+<!-- ═════════ §7 LOG ═════════ -->
 <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
-  <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-2">§6&nbsp; Daily check-in</h2>
+  <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-2">§7&nbsp; Daily check-in</h2>
   <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-5 max-w-xl">
     The one thing your watch cannot see. Saves instantly in this browser.
   </p>
@@ -267,6 +297,11 @@ const S = {
   ref:    145,   // heart rate the efficiency figure is normalised to
   annual: 2000,  // kilometres you intend to run this year
 };
+
+// Body measurements. Height drives the cadence and stride reference bands;
+// weight is recorded for completeness but does not set either target.
+const HEIGHT_CM = 187;
+const WEIGHT_KG = 80;
 
 const LKEY = "gw-checkin-v3";
 const readL = () => { try { return JSON.parse(localStorage.getItem(LKEY))||{}; } catch(e){ return {}; } };
@@ -370,10 +405,14 @@ function buildMock(){
       name:isLong?"Bois de la Cambre":isQual?"Étangs d'Ixelles":"Saint-Gilles",
       km:Math.round(km*100)/100, minutes:Math.round(mins*10)/10,
       paceSecPerKm:Math.round(mins*60/km), hr, maxHr:hr+Math.round(14+12*rnd()),
-      metresPerBeat:Math.round(mpb*1000)/1000, cadence:Math.round(169+6*rnd()),
+      metresPerBeat:Math.round(mpb*1000)/1000,
+      cadence:Math.round(163+5*t+ (isQual?7:0) +4*rnd()),
+      strideM:null,
       load:Math.round(km*(isQual?8.5:5.2)),
       decoupling:isLong?Math.round((3.4+5.5*rnd()-3*t)*10)/10:null,
       rpe:isQual?Math.round(6+2*rnd()):Math.round(3+2*rnd()) });
+    const last=activities[activities.length-1];
+    last.strideM = Math.round(last.km*1000/(last.cadence*last.minutes)*1000)/1000;
   }
   return { generated:new Date().toISOString(), activities, wellness };
 }
@@ -450,6 +489,12 @@ function render(data){
       leRatio!=null?"efficiency vs your easy runs":"need long runs with HR",
       leRatio==null?"":leRatio>=0.97?GOOD:leRatio>=0.92?WARN:BAD);
   }
+
+  const cadRecent = mean(acts.filter(a=>a.cadence&&a.date>=since(28)).map(a=>a.cadence));
+  const cadPrior  = mean(acts.filter(a=>a.cadence&&a.date>=since(90)&&a.date<since(28)).map(a=>a.cadence));
+  tile("tilesPerf","Cadence", cadRecent?fix(cadRecent,0):"—",
+    cadPrior ? "spm · "+(cadRecent-cadPrior>=0?"+":"")+fix(cadRecent-cadPrior,1)+" vs prior 60 days" : "spm, last 28 days",
+    (cadRecent&&cadPrior)?((cadRecent-cadPrior)>0.8?GOOD:(cadRecent-cadPrior)<-1.5?BAD:""):"");
 
   const km7  = acts.filter(a=>a.date>=since(7)).reduce((s,a)=>s+a.km,0);
   const km28 = acts.filter(a=>a.date>=since(28)).reduce((s,a)=>s+a.km,0);
@@ -557,6 +602,20 @@ function render(data){
       : "Averaging "+fix(sleep7,1)+" hours. This will limit everything else on this page.",
       sleep7>=7.3?"good":sleep7>=6.8?"flat":"bad");
 
+  if (cadNow && cadTarget){
+    const gap = cadTarget - cadNow;
+    push("Cadence", gap<=0 ? "Easy-run cadence is "+fix(cadNow,0)+" spm, at or above your +5% target."
+      : gap<=3 ? "Easy-run cadence is "+fix(cadNow,0)+" spm, within "+fix(gap,1)+" of your +5% target. Close."
+      : "Easy-run cadence is "+fix(cadNow,0)+" spm against a "+fix(cadTarget,0)+" target. Practise the higher turnover during strides first.",
+      gap<=0?"good":gap<=3?"flat":"bad");
+  }
+  if (strideNow){
+    const r = strideNow/(HEIGHT_CM/100);
+    push("Stride", r>0.60 ? "Easy-run stride is "+fix(r,2)+" of your height. Long for easy pace, which usually means reaching out in front of your hips."
+      : "Easy-run stride is "+fix(r,2)+" of your height, "+fix(strideNow,2)+" m. Sensible for easy running.",
+      r>0.60?"bad":"good");
+  }
+
   const longest28 = Math.max(0,...acts.filter(a=>a.date>=since(28)).map(a=>a.km));
   if (longest28) push("Long run", "Longest in 28 days: "+fix(longest28,1)+" km.", "flat");
 
@@ -627,33 +686,86 @@ function render(data){
     options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>fix(i.parsed.y,1)+" km" } } },
       scales:{ y:{ beginAtZero:true, ticks:{ callback:(v)=>v+" km" } } } } });
 
-  // heatmap
-  const days=[]; const start=new Date(); start.setDate(start.getDate()-181);
-  const startM=new Date(monday(start));
-  for(let i=0;i<26*7;i++){ const d=new Date(startM); d.setDate(d.getDate()+i); days.push(iso(d)); }
-  const maxKm = Math.max(1,...Object.values(kmByDate));
-  const shade = (km) => !km ? "bg-zinc-100 dark:bg-zinc-900"
-    : km < maxKm*0.33 ? "bg-blue-200 dark:bg-blue-900"
-    : km < maxKm*0.66 ? "bg-blue-400 dark:bg-blue-700" : "bg-blue-600 dark:bg-blue-500";
-  let hm='<div class="grid grid-flow-col gap-[3px]" style="grid-template-rows:repeat(7,minmax(0,1fr))">';
-  days.forEach(d=>{ const km=kmByDate[d]||0;
-    hm+='<div class="cell '+shade(km)+'" title="'+d+(km?" · "+km.toFixed(1)+" km":" · rest")+'"></div>'; });
-  $("heatmap").innerHTML = hm+'</div>';
+  /* ── §5 cadence and stride ── */
+  // Reference bands scale with height. Cadence rises with speed; stride is
+  // then whatever speed divided by cadence gives you.
+  const cadLow  = (sp) => 158 + 10*(sp-2.5) - (HEIGHT_CM-178)*0.35;
+  const cadHigh = (sp) => 170 + 10*(sp-2.5) - (HEIGHT_CM-178)*0.35;
 
-  const bands = wkKeys.map(k=>{
-    const r = acts.filter(a=>monday(a.date)===k && a.hr!=null && a.minutes);
-    return { e:r.filter(a=>a.hr<S.easy).reduce((s,a)=>s+a.minutes,0),
-             m:r.filter(a=>a.hr>=S.easy&&a.hr<S.hard).reduce((s,a)=>s+a.minutes,0),
-             h:r.filter(a=>a.hr>=S.hard).reduce((s,a)=>s+a.minutes,0) }; });
-  mk("intensityChart",{ type:"bar", data:{ labels:wkKeys.map(shortDate), datasets:[
-      { data:bands.map(b=>Math.round(b.e)), backgroundColor:BLUE,  stack:"s", maxBarThickness:14 },
-      { data:bands.map(b=>Math.round(b.m)), backgroundColor:AMBER, stack:"s", maxBarThickness:14 },
-      { data:bands.map(b=>Math.round(b.h)), backgroundColor:ROSE,  stack:"s", maxBarThickness:14 }]},
-    options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>
-        ["Easy","Moderate","Hard"][i.datasetIndex]+" "+i.parsed.y+" min" } } },
-      scales:{ x:{stacked:true}, y:{stacked:true, beginAtZero:true, ticks:{callback:(v)=>v+"m"}} } } });
+  const withCad = acts.filter(a=>a.cadence&&a.paceSecPerKm&&a.km>=3);
+  const cadEasy = withCad.filter(a=>a.hr!=null&&a.hr<S.easy)
+    .map(a=>({date:a.date,v:a.cadence})).sort((x,y)=>x.date<y.date?-1:1);
+  const cadBase = mean(withCad.filter(a=>a.date>=since(90)).map(a=>a.cadence));
+  const cadTarget = cadBase ? cadBase*1.05 : null;
+  const cadNow = mean(cadEasy.slice(-5).map(e=>e.v));
+  const cadOld = mean(cadEasy.slice(-12,-5).map(e=>e.v));
 
-  /* ── §5 charts ── */
+  const withStride = acts.filter(a=>a.strideM&&a.paceSecPerKm&&a.km>=3);
+  const strideNow = mean(withStride.filter(a=>a.hr!=null&&a.hr<S.easy).slice(0,5).map(a=>a.strideM));
+
+  tile("tilesCadence","Cadence", cadNow?fix(cadNow,0):"—",
+    cadTarget ? "spm on easy runs · target "+fix(cadTarget,0) : "spm on easy runs",
+    (cadNow&&cadTarget)?(cadNow>=cadTarget?GOOD:cadNow>=cadTarget*0.97?WARN:BAD):"");
+  tile("tilesCadence","Cadence trend", (cadNow&&cadOld)?((cadNow-cadOld>=0?"+":"")+fix(cadNow-cadOld,1)):"—",
+    "spm · last 5 vs previous 7",
+    (cadNow&&cadOld)?((cadNow-cadOld)>0.8?GOOD:(cadNow-cadOld)<-1.5?BAD:""):"");
+  tile("tilesCadence","Stride length", strideNow?fix(strideNow,2):"—", "metres on easy runs");
+  tile("tilesCadence","Stride vs height", strideNow?fix(strideNow/(HEIGHT_CM/100),2):"—",
+    strideNow ? "easy pace guide 0.50–0.58" : "of your "+ (HEIGHT_CM/100).toFixed(2) +" m",
+    strideNow ? ((strideNow/(HEIGHT_CM/100))>0.60?WARN:GOOD) : "");
+
+  // cadence against pace, with reference band
+  const cadSc = withCad.slice(0,120).reverse();
+  const speeds = cadSc.map(a=>1000/a.paceSecPerKm);
+  const spMin = Math.min(...speeds, 2.4), spMax = Math.max(...speeds, 4.4);
+  const bandX = [spMin, spMax];
+  mk("cadPaceChart",{ type:"scatter", data:{ datasets:[
+      { data:bandX.map(x=>({x, y:cadHigh(x)})), showLine:true, borderColor:"transparent",
+        backgroundColor:"rgba(16,185,129,.14)", fill:"+1", pointRadius:0, order:3 },
+      { data:bandX.map(x=>({x, y:cadLow(x)})), showLine:true, borderColor:"transparent",
+        pointRadius:0, order:3 },
+      { data: cadSc.map((a,i)=>({x:1000/a.paceSecPerKm, y:a.cadence, _d:a.date, _p:a.paceSecPerKm})),
+        pointBackgroundColor: cadSc.map((_,i)=>{ const t=i/Math.max(1,cadSc.length-1);
+          return "rgba("+Math.round(203-144*t)+","+Math.round(213-83*t)+","+Math.round(225+21*t)+","+(0.4+0.6*t)+")"; }),
+        pointRadius:4, borderColor:"transparent", order:1 } ]},
+    options:{ plugins:{ tooltip:{ filter:(i)=>i.datasetIndex===2, callbacks:{ label:(i)=>
+        Math.round(i.parsed.y)+" spm · "+mmss(i.raw._p)+"/km · "+shortDate(i.raw._d) } } },
+      scales:{ x:{ type:"linear", grid:{color:GRID,drawTicks:false},
+                   title:{display:true,text:"pace min/km",color:TICK,font:{size:10}},
+                   ticks:{ callback:(v)=>v>0?mmss(1000/v):"" } },
+               y:{ title:{display:true,text:"cadence spm",color:TICK,font:{size:10}} } } } });
+
+  // cadence over time on easy runs
+  const cadRoll = cadEasy.map((_,i)=>mean(cadEasy.slice(Math.max(0,i-4),i+1).map(e=>e.v)));
+  mk("cadTimeChart",{ type:"line", data:{ labels:cadEasy.map(e=>shortDate(e.date)), datasets:[
+      { data:cadEasy.map(e=>e.v), showLine:false, pointRadius:2.5, pointBackgroundColor:BLUE, borderColor:"transparent" },
+      { data:cadRoll, borderColor:ORANGE, borderWidth:2, pointRadius:0, tension:.35 },
+      ...(cadTarget ? [{ data:cadEasy.map(()=>cadTarget), borderColor:GREEN, borderWidth:1.25,
+        borderDash:[5,4], pointRadius:0 }] : []) ]},
+    options:{ plugins:{ tooltip:{ filter:(i)=>i.datasetIndex<2, callbacks:{ label:(i)=>fix(i.parsed.y,1)+" spm" } } },
+      scales:{ y:{ beginAtZero:false }, x:{ ticks:{maxTicksLimit:9} } } } });
+
+  // stride length against pace
+  const stSc = withStride.slice(0,120).reverse();
+  const stSpeeds = stSc.map(a=>1000/a.paceSecPerKm);
+  const stMin = Math.min(...stSpeeds, 2.4), stMax = Math.max(...stSpeeds, 4.4);
+  const strideAt = (sp, cadFn) => sp / (cadFn(sp)/60);
+  const stBandX = [stMin, stMax];
+  mk("strideChart",{ type:"scatter", data:{ datasets:[
+      { data:stBandX.map(x=>({x, y:strideAt(x,cadLow)})), showLine:true, borderColor:"transparent",
+        backgroundColor:"rgba(16,185,129,.14)", fill:"+1", pointRadius:0, order:3 },
+      { data:stBandX.map(x=>({x, y:strideAt(x,cadHigh)})), showLine:true, borderColor:"transparent",
+        pointRadius:0, order:3 },
+      { data: stSc.map(a=>({x:1000/a.paceSecPerKm, y:a.strideM, _d:a.date, _p:a.paceSecPerKm})),
+        pointBackgroundColor:BLUE, pointRadius:4, borderColor:"transparent", order:1 } ]},
+    options:{ plugins:{ tooltip:{ filter:(i)=>i.datasetIndex===2, callbacks:{ label:(i)=>
+        fix(i.parsed.y,2)+" m · "+fix(i.parsed.y/(HEIGHT_CM/100),2)+" of height · "+mmss(i.raw._p)+"/km" } } },
+      scales:{ x:{ type:"linear", grid:{color:GRID,drawTicks:false},
+                   title:{display:true,text:"pace min/km",color:TICK,font:{size:10}},
+                   ticks:{ callback:(v)=>v>0?mmss(1000/v):"" } },
+               y:{ title:{display:true,text:"stride metres",color:TICK,font:{size:10}} } } } });
+
+  /* ── §6 charts ── */
   const w120 = well.filter(w=>w.rhr!=null||w.hrv!=null).slice(0,120).reverse();
   mk("wellChart",{ type:"line", data:{ labels:w120.map(w=>shortDate(w.date)), datasets:[
       { data:w120.map(w=>w.rhr), borderColor:ORANGE, borderWidth:1.25, borderDash:[4,3], pointRadius:0, tension:.35, spanGaps:true },
