@@ -421,7 +421,19 @@ loadData().then(({data,mock}) => { if(mock) $("mockFlag").classList.remove("hidd
 
 /* ══════════════════════════════════════════════════════════════ */
 function render(data){
-  const acts = (data.activities||[]).filter(a=>a.isRun!==false).slice().sort((a,b)=>a.date<b.date?1:-1);
+  const acts = (data.activities||[]).filter(a=>a.isRun!==false).map(a=>{
+    // Belt and braces: fix these here as well as in fetch.mjs, so the page is
+    // correct even when data.json was written by an older version of the script.
+    let cad = a.cadence;
+    if (cad && cad < 120) cad *= 2;              // one-foot cadence → both feet
+    let st = a.strideM;
+    if (st && st > 3) st /= 100;                  // centimetres → metres
+    if (!st && cad && a.minutes > 0 && a.km > 0)  // derive from cadence and pace
+      st = (a.km * 1000) / (cad * a.minutes);
+    return { ...a,
+      cadence: cad ? Math.round(cad*10)/10 : null,
+      strideM: st ? Math.round(st*1000)/1000 : null };
+  }).sort((a,b)=>a.date<b.date?1:-1);
   const well = (data.wellness||[]).slice().sort((a,b)=>a.date<b.date?1:-1);
   const log  = readL();
 
