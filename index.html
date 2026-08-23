@@ -433,6 +433,22 @@ function render(data){
   acts.forEach(a=>{ kmByDate[a.date]=(kmByDate[a.date]||0)+a.km;
     const m=monday(a.date); weekly[m]=(weekly[m]||0)+a.km; });
 
+  // Reference bands scale with height. Cadence rises with speed; stride is
+  // then whatever speed divided by cadence gives you.
+  const cadLow  = (sp) => 158 + 10*(sp-2.5) - (HEIGHT_CM-178)*0.35;
+  const cadHigh = (sp) => 170 + 10*(sp-2.5) - (HEIGHT_CM-178)*0.35;
+
+  const withCad = acts.filter(a=>a.cadence&&a.paceSecPerKm&&a.km>=3);
+  const cadEasy = withCad.filter(a=>a.hr!=null&&a.hr<S.easy)
+    .map(a=>({date:a.date,v:a.cadence})).sort((x,y)=>x.date<y.date?-1:1);
+  const cadBase = mean(withCad.filter(a=>a.date>=since(90)).map(a=>a.cadence));
+  const cadTarget = cadBase ? cadBase*1.05 : null;
+  const cadNow = mean(cadEasy.slice(-5).map(e=>e.v));
+  const cadOld = mean(cadEasy.slice(-12,-5).map(e=>e.v));
+
+  const withStride = acts.filter(a=>a.strideM&&a.paceSecPerKm&&a.km>=3);
+  const strideNow = mean(withStride.filter(a=>a.hr!=null&&a.hr<S.easy).slice(0,5).map(a=>a.strideM));
+
   /* ── §1 tiles ── */
   const latest = well[0]||{};
   const hrvBase = mean(ser("hrv",30,1)), rhrBase = mean(ser("rhr",30,1));
@@ -687,22 +703,6 @@ function render(data){
       scales:{ y:{ beginAtZero:true, ticks:{ callback:(v)=>v+" km" } } } } });
 
   /* ── §5 cadence and stride ── */
-  // Reference bands scale with height. Cadence rises with speed; stride is
-  // then whatever speed divided by cadence gives you.
-  const cadLow  = (sp) => 158 + 10*(sp-2.5) - (HEIGHT_CM-178)*0.35;
-  const cadHigh = (sp) => 170 + 10*(sp-2.5) - (HEIGHT_CM-178)*0.35;
-
-  const withCad = acts.filter(a=>a.cadence&&a.paceSecPerKm&&a.km>=3);
-  const cadEasy = withCad.filter(a=>a.hr!=null&&a.hr<S.easy)
-    .map(a=>({date:a.date,v:a.cadence})).sort((x,y)=>x.date<y.date?-1:1);
-  const cadBase = mean(withCad.filter(a=>a.date>=since(90)).map(a=>a.cadence));
-  const cadTarget = cadBase ? cadBase*1.05 : null;
-  const cadNow = mean(cadEasy.slice(-5).map(e=>e.v));
-  const cadOld = mean(cadEasy.slice(-12,-5).map(e=>e.v));
-
-  const withStride = acts.filter(a=>a.strideM&&a.paceSecPerKm&&a.km>=3);
-  const strideNow = mean(withStride.filter(a=>a.hr!=null&&a.hr<S.easy).slice(0,5).map(a=>a.strideM));
-
   tile("tilesCadence","Cadence", cadNow?fix(cadNow,0):"—",
     cadTarget ? "spm on easy runs · target "+fix(cadTarget,0) : "spm on easy runs",
     (cadNow&&cadTarget)?(cadNow>=cadTarget?GOOD:cadNow>=cadTarget*0.97?WARN:BAD):"");
