@@ -10,748 +10,652 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..500&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script>
-tailwind.config = {
-  darkMode: 'media',
-  theme: {
-    extend: {
-      fontFamily: {
-        serif: ['"Source Serif 4"', 'Georgia', 'serif'],
-        mono:  ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
-      },
-    },
-  },
-};
+tailwind.config = { darkMode:'media', theme:{ extend:{ fontFamily:{
+  serif:['"Source Serif 4"','Georgia','serif'], mono:['"IBM Plex Mono"','ui-monospace','monospace'] }}}};
 </script>
 <style>
-  body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
-  .num { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
-  /* Tufte: labels are quiet, data is loud */
-  .lbl { font-family: "IBM Plex Mono", monospace; font-size: 10px; letter-spacing: .14em;
-         text-transform: uppercase; }
-  .whisper { font-style: italic; line-height: 1.5; }
-  canvas { cursor: crosshair; }
-  select, input { font-family: "IBM Plex Mono", monospace; }
-  input[type=number]::-webkit-inner-spin-button { opacity: .35; }
+  body{-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+  .num{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+  .lbl{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+  .whisper{font-style:italic;line-height:1.55}
+  canvas{cursor:crosshair}
+  select,input{font-family:"IBM Plex Mono",monospace}
+  .cell{width:100%;aspect-ratio:1;border-radius:1px}
 </style>
 </head>
 <body class="bg-[#FCFCFA] dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-serif">
 <main class="max-w-3xl mx-auto px-5 sm:px-8 py-10 sm:py-14">
 
-  <!-- ══════════ MASTHEAD ══════════ -->
-  <header class="mb-12">
-    <div class="flex items-baseline justify-between gap-4 flex-wrap">
-      <div>
-        <p class="lbl text-zinc-400 dark:text-zinc-600">Block 1 · Rebuild</p>
-        <h1 class="font-mono text-6xl sm:text-7xl font-semibold tracking-tighter num leading-none mt-1" id="cd">—</h1>
-        <p class="text-sm text-zinc-500 dark:text-zinc-400 mt-1.5">days to 31 December</p>
-      </div>
-      <div class="font-mono text-[11px] text-zinc-500 dark:text-zinc-400 space-y-1 num text-right">
-        <div>5K &nbsp;23:46 <span class="text-zinc-300 dark:text-zinc-700">→</span> <span class="text-zinc-900 dark:text-zinc-100 font-medium">19:59</span></div>
-        <div>10K 49:18 <span class="text-zinc-300 dark:text-zinc-700">→</span> <span class="text-zinc-900 dark:text-zinc-100 font-medium">42:00</span></div>
-        <div>HM &nbsp;1:43 <span class="text-zinc-300 dark:text-zinc-700">→</span> <span class="text-zinc-900 dark:text-zinc-100 font-medium">spring 27</span></div>
-      </div>
-    </div>
-    <div id="mockFlag" class="hidden mt-6 border-l-2 border-amber-500 pl-3 py-1 text-[13px] text-amber-700 dark:text-amber-500">
-      Showing demo data. The live site reads <span class="font-mono">data.json</span> from your repository.
-    </div>
-  </header>
+<!-- ═════════ MASTHEAD ═════════ -->
+<header class="mb-10">
+  <p class="lbl text-zinc-400 dark:text-zinc-600">State of play</p>
+  <h1 id="headline" class="text-3xl sm:text-4xl leading-tight mt-2 max-w-2xl">Reading your data…</h1>
+  <p id="headsub" class="whisper text-[14px] text-zinc-500 dark:text-zinc-400 mt-2 max-w-xl"></p>
+  <div id="mockFlag" class="hidden mt-5 border-l-2 border-amber-500 pl-3 py-1 text-[13px] text-amber-700 dark:text-amber-500">
+    Showing demo data. The live site reads <span class="font-mono">data.json</span> from your repository.
+  </div>
+</header>
 
-  <!-- ══════════ 1 · TODAY ══════════ -->
-  <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
-    <div class="flex items-baseline justify-between mb-6">
-      <h2 class="lbl text-zinc-400 dark:text-zinc-600">§1 &nbsp;Today</h2>
-      <span class="text-[11px] text-zinc-400 dark:text-zinc-600">every morning</span>
-    </div>
+<!-- ═════════ §1 RIGHT NOW ═════════ -->
+<section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
+  <div class="flex items-baseline justify-between mb-6">
+    <h2 class="lbl text-zinc-400 dark:text-zinc-600">§1&nbsp; Right now</h2>
+    <span class="text-[11px] text-zinc-400 dark:text-zinc-600" id="freshness">—</span>
+  </div>
 
-    <!-- verdict -->
-    <div id="verdict" class="border-l-2 border-zinc-300 dark:border-zinc-700 pl-4 py-1 mb-8">
-      <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Verdict</p>
-      <p id="verdictText" class="text-xl sm:text-2xl leading-snug">Reading this morning's numbers…</p>
-      <p id="verdictWhy" class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mt-1.5"></p>
-    </div>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-3">Recovery</p>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6 mb-8" id="tilesRecovery"></div>
 
-    <!-- next session -->
-    <div class="mb-9">
-      <p class="lbl text-zinc-400 dark:text-zinc-600 mb-2">Next session</p>
-      <div class="flex items-baseline gap-3 flex-wrap">
-        <span id="hDate" class="font-mono text-[11px] tracking-widest uppercase text-rose-700 dark:text-rose-400">—</span>
-        <span id="hKey" class="hidden font-mono text-[10px] tracking-widest uppercase px-1.5 py-0.5 border border-rose-700/40 dark:border-rose-400/40 text-rose-700 dark:text-rose-400">key</span>
-      </div>
-      <p id="hTitle" class="text-2xl sm:text-3xl mt-1 leading-tight">Loading</p>
-      <p id="hDet" class="text-zinc-500 dark:text-zinc-400 text-[15px] mt-0.5"></p>
-    </div>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-3">Performance</p>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6 mb-8" id="tilesPerf"></div>
 
-    <!-- morning recovery -->
-    <p class="lbl text-zinc-400 dark:text-zinc-600 mb-3">Morning recovery</p>
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6 mb-3">
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Sleep score</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mSleepScore">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400" id="sSleepScore">out of 100</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Sleep</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mSleep">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400" id="sSleep">hours</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">HRV</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mHrv">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400" id="sHrv">vs 30-day</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Resting HR</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mRhr">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400" id="sRhr">vs 30-day</p></div>
-    </div>
-    <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-9 max-w-xl">
-      Read the deviations, never the raw numbers. HRV of 58 means nothing on its own; HRV eight below your
-      own baseline means something. And treat the two together — one dipping is noise, both moving at once is signal.
-    </p>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-3">Training</p>
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6" id="tilesTraining"></div>
+</section>
 
-    <!-- general health -->
-    <p class="lbl text-zinc-400 dark:text-zinc-600 mb-3">General health</p>
-    <div class="flex items-baseline gap-5 flex-wrap mb-2">
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Steps yesterday</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mSteps">—</p></div>
-      <div class="flex-1 min-w-[140px] pb-1">
-        <div class="h-px bg-zinc-200 dark:bg-zinc-800 relative mt-6">
-          <div id="stepBar" class="h-[3px] -mt-[1px] bg-zinc-900 dark:bg-zinc-100" style="width:0%"></div>
-          <div class="absolute top-0 h-[9px] -mt-[4px] w-px bg-zinc-400 dark:bg-zinc-600" style="left:100%"></div>
-        </div>
-        <p class="text-[11px] text-zinc-400 dark:text-zinc-600 mt-1.5 num" id="sSteps">against 10,000</p>
-      </div>
-    </div>
-    <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-9 max-w-xl">
-      Total daily movement. If this drops, your training load is making you too lethargic outside of running.
-    </p>
+<!-- ═════════ §2 SIGNALS ═════════ -->
+<section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
+  <div class="flex items-baseline justify-between mb-2">
+    <h2 class="lbl text-zinc-400 dark:text-zinc-600">§2&nbsp; Signals</h2>
+    <span class="text-[11px] text-zinc-400 dark:text-zinc-600">read first</span>
+  </div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-5 max-w-xl">
+    Every line below is computed fresh from your last few months of data. Nothing here is written in advance,
+    so if a statement disappears tomorrow it is because the number that produced it moved.
+  </p>
+  <ul id="signals" class="divide-y divide-zinc-100 dark:divide-zinc-900"></ul>
+</section>
 
-    <!-- check-in -->
-    <p class="lbl text-zinc-400 dark:text-zinc-600 mb-3">Daily check-in</p>
-    <div class="flex gap-5 flex-wrap items-end">
-      <div class="flex flex-col gap-1.5">
-        <label class="lbl text-zinc-400 dark:text-zinc-600" for="niggle">Niggle</label>
-        <select id="niggle" class="bg-transparent border-0 border-b border-zinc-300 dark:border-zinc-700 text-[15px] py-1 pr-6 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100">
-          <option value="">none</option><option>calf</option><option>achilles</option><option>knee</option>
-          <option>hamstring</option><option>hip</option><option>shin</option><option>foot</option>
-          <option>ITB</option><option>back</option><option>other</option>
-        </select>
-      </div>
-      <div class="flex flex-col gap-1.5">
-        <label class="lbl text-zinc-400 dark:text-zinc-600" for="sev">Severity 1–3</label>
-        <input type="number" id="sev" min="1" max="3" step="1" placeholder="–"
-          class="w-16 bg-transparent border-0 border-b border-zinc-300 dark:border-zinc-700 text-[15px] py-1 num focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100">
-      </div>
-      <div class="flex flex-col gap-1.5">
-        <label class="lbl text-zinc-400 dark:text-zinc-600" for="feel">Physical feel 1–10</label>
-        <input type="number" id="feel" min="1" max="10" step="1" placeholder="–"
-          class="w-16 bg-transparent border-0 border-b border-zinc-300 dark:border-zinc-700 text-[15px] py-1 num focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100">
-      </div>
-      <span id="savedMsg" class="font-mono text-[11px] text-emerald-700 dark:text-emerald-400 pb-2 opacity-0 transition-opacity">saved</span>
-    </div>
-    <p id="niggleWarn" class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mt-3 max-w-xl">
-      Saves instantly, in this browser. Ten seconds a day, and it catches what no sensor can.
-    </p>
-  </section>
+<!-- ═════════ §3 AM I GETTING FITTER ═════════ -->
+<section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
+  <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-6">§3&nbsp; Am I getting fitter?</h2>
 
-  <!-- ══════════ 2 · THIS WEEK ══════════ -->
-  <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
-    <div class="flex items-baseline justify-between mb-6">
-      <h2 class="lbl text-zinc-400 dark:text-zinc-600">§2 &nbsp;This week</h2>
-      <span class="text-[11px] text-zinc-400 dark:text-zinc-600">consistency &gt; heroics</span>
-    </div>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Aerobic efficiency · metres per heartbeat</p>
+  <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
+    <span class="flex items-center gap-1.5"><i class="inline-block w-[7px] h-[7px] rounded-full bg-[#3b82f6]"></i>Each easy run</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] bg-[#f97316]"></i>5-run average</span>
+  </div>
+  <div class="relative h-[230px] mb-3"><canvas id="effChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
+    How far each heartbeat carries you. It strips out weather, terrain and mood and asks one question:
+    at a given cardiac cost, how much distance do you get? <b class="not-italic font-medium">Watch the orange line, not the dots.</b>
+    Rising over six to eight weeks means the training is working. Flat for two months at consistent volume means
+    something needs to change: more volume, more intensity, or more sleep. Falling while volume is steady usually
+    means fatigue or heat rather than lost fitness.
+  </p>
 
-    <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-6 mb-8">
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Volume</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mKm">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400" id="sKm">against target</p>
-        <div class="h-px bg-zinc-200 dark:bg-zinc-800 mt-2.5 relative">
-          <div id="kmBar" class="h-[3px] -mt-[1px] bg-zinc-900 dark:bg-zinc-100" style="width:0%"></div>
-        </div></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Sessions</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mSess">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400">completed of planned</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Easy share</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mEasy">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400">target above 80%</p></div>
-    </div>
-    <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-9 max-w-xl">
-      Easy share is the share of this week's running minutes spent on runs averaging under 150 bpm.
-      Below 65% and you are in the amateur trap: every run too hard to recover from, none hard enough to adapt to.
-    </p>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Heart rate against pace · every run</p>
+  <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
+    <span class="flex items-center gap-1.5"><i class="inline-block w-[7px] h-[7px] rounded-full bg-[#cbd5e1]"></i>Older</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-[7px] h-[7px] rounded-full bg-[#3b82f6]"></i>Recent</span>
+  </div>
+  <div class="relative h-[250px] mb-3"><canvas id="scatterChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
+    The single most honest picture of fitness change. Each dot is one run: pace across, heart rate up.
+    <b class="not-italic font-medium">You want the blue dots sitting below and to the left of the grey ones</b> — same pace at
+    a lower heart rate, or faster at the same heart rate. If the blue cloud sits directly on top of the grey,
+    you have held fitness but not built it.
+  </p>
 
-    <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">The ladder</p>
-    <ul id="ladder" class="divide-y divide-zinc-100 dark:divide-zinc-900"></ul>
-  </section>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Aerobic durability · decoupling on long runs</p>
+  <div class="relative h-[190px] mb-3"><canvas id="decoupChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xl">
+    How much your heart rate drifts upward through a long run relative to pace. Under 5% means the aerobic base
+    held all the way. Above 10% means you outran it and the second half cost far more than the first.
+    <b class="not-italic font-medium">Falling over a block is the signature of genuine endurance being built</b>, and it usually
+    improves before race pace does.
+  </p>
+</section>
 
-  <!-- ══════════ 3 · THIS BLOCK ══════════ -->
-  <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
-    <div class="flex items-baseline justify-between mb-6">
-      <h2 class="lbl text-zinc-400 dark:text-zinc-600">§3 &nbsp;This block</h2>
-      <span class="text-[11px] text-zinc-400 dark:text-zinc-600">is it working?</span>
-    </div>
+<!-- ═════════ §4 AM I TRAINING ENOUGH ═════════ -->
+<section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
+  <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-6">§4&nbsp; Am I training consistently?</h2>
 
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-6 mb-3">
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Fitness · CTL</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mCtl">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400" id="sCtl">chronic load</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Fatigue · ATL</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mAtl">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400">acute load</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Load ratio</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mAcwr">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400" id="sAcwr">safe zone 0.8–1.3</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Decoupling</p>
-        <p class="font-mono text-3xl num font-medium mt-1" id="mDecoup">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400">long runs over 12 km</p></div>
-    </div>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Weekly volume · against your own rolling average</p>
+  <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-[#3b82f6]"></i>Week</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] bg-[#f97316]"></i>4-week average</span>
+  </div>
+  <div class="relative h-[220px] mb-3"><canvas id="volChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
+    No fixed target, because a target set in August is wrong by October. The orange line is your own four-week
+    average, so the question becomes whether you are trending up, holding, or sliding.
+    <b class="not-italic font-medium">Sustainable building looks like three weeks up, one week down, repeating.</b>
+  </p>
 
-    <!-- ratio gauge -->
-    <div class="mb-3 max-w-md">
-      <div class="relative h-[26px]">
-        <div class="absolute top-[12px] left-0 right-0 h-px bg-zinc-200 dark:bg-zinc-800"></div>
-        <div class="absolute top-[10px] h-[5px] bg-emerald-600/25 dark:bg-emerald-400/25"
-             style="left:26.7%; width:33.3%"></div>
-        <div id="acwrMark" class="absolute top-[5px] w-px h-[15px] bg-zinc-900 dark:bg-zinc-100 transition-all" style="left:0%"></div>
-      </div>
-      <div class="flex justify-between font-mono text-[10px] text-zinc-400 dark:text-zinc-600 num">
-        <span>0.0</span><span>0.8</span><span>1.3</span><span>2.0</span>
-      </div>
-    </div>
-    <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
-      Below 0.8 you are detraining, above 1.3 you are ramping faster than your base supports. Decoupling under
-      5% means the aerobic base is holding through a long run; above 10% means you outran it.
-    </p>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Consistency · last 26 weeks</p>
+  <div id="heatmap" class="mb-2"></div>
+  <div class="flex items-center gap-2 text-[11px] text-zinc-400 dark:text-zinc-600 mb-3">
+    <span>less</span>
+    <i class="inline-block w-3 h-3 rounded-sm bg-zinc-100 dark:bg-zinc-900"></i>
+    <i class="inline-block w-3 h-3 rounded-sm bg-blue-200 dark:bg-blue-900"></i>
+    <i class="inline-block w-3 h-3 rounded-sm bg-blue-400 dark:bg-blue-700"></i>
+    <i class="inline-block w-3 h-3 rounded-sm bg-blue-600 dark:bg-blue-500"></i>
+    <span>more</span>
+  </div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
+    One square per day, darker means further. <b class="not-italic font-medium">Gaps matter more than peaks.</b>
+    A month of moderate squares beats two enormous weeks followed by a blank fortnight, and this is the one
+    picture that makes that impossible to argue with.
+  </p>
 
-    <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Fitness against fatigue · 6 months</p>
-    <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
-      <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] bg-[#3b82f6]"></i>Fitness</span>
-      <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] border-t border-dashed border-[#f97316]"></i>Fatigue</span>
-    </div>
-    <div class="relative h-[220px] mb-10"><canvas id="loadChart"></canvas></div>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Intensity distribution · minutes per week</p>
+  <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-[#3b82f6]"></i>Easy</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-[#f59e0b]"></i>Moderate</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-[#e11d48]"></i>Hard</span>
+  </div>
+  <div class="relative h-[220px] mb-3"><canvas id="intensityChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xl">
+    <b class="not-italic font-medium">You want roughly 80% blue.</b> A wall of amber is the classic amateur trap:
+    every run too hard to recover from, none hard enough to force adaptation. Easy means an average below 150 bpm,
+    hard means 165 and above.
+  </p>
+</section>
 
-    <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Aerobic efficiency · metres per heartbeat</p>
-    <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
-      <span class="flex items-center gap-1.5"><i class="inline-block w-[7px] h-[7px] rounded-full bg-[#3b82f6]"></i>Each easy run</span>
-      <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] bg-[#f97316]"></i>5-run average</span>
-    </div>
-    <div class="relative h-[240px] mb-3"><canvas id="effChart"></canvas></div>
-    <div class="flex items-baseline gap-6 mb-2">
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Change</p>
-        <p class="font-mono text-2xl num font-medium mt-1" id="mEffDelta">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400">last 5 vs previous 5</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">Equivalent pace at 145</p>
-        <p class="font-mono text-2xl num font-medium mt-1" id="mEffPace">—</p>
-        <p class="text-[12px] text-zinc-500 dark:text-zinc-400">from the current average</p></div>
-    </div>
-    <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xl">
-      Higher metres per beat at the same heart rate = getting fitter. This is the most honest number on the page,
-      because it strips out weather, terrain and mood and asks only one thing: how far does each heartbeat carry you?
-      Only easy runs between 130 and 158 bpm are plotted, so the comparison stays fair.
-    </p>
-  </section>
+<!-- ═════════ §5 AM I RECOVERING ═════════ -->
+<section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
+  <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-6">§5&nbsp; Am I recovering?</h2>
 
-  <!-- ══════════ 4 · THIS YEAR ══════════ -->
-  <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
-    <div class="flex items-baseline justify-between mb-6">
-      <h2 class="lbl text-zinc-400 dark:text-zinc-600">§4 &nbsp;This year</h2>
-      <span class="text-[11px] text-zinc-400 dark:text-zinc-600">check monthly</span>
-    </div>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Resting HR and HRV · 120 days</p>
+  <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] border-t border-dashed border-[#f97316]"></i>Resting HR</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] bg-[#3b82f6]"></i>HRV</span>
+  </div>
+  <div class="relative h-[220px] mb-3"><canvas id="wellChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
+    Ignore the daily wobble entirely at this scale. <b class="not-italic font-medium">Resting HR drifting down and HRV drifting
+    up is what a year of good adaptation looks like.</b> The two crossing the wrong way for several weeks while
+    training load rises is the earliest warning of overreaching you will get.
+  </p>
 
-    <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Resting HR and HRV · 90 days</p>
-    <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
-      <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] border-t border-dashed border-[#f97316]"></i>Resting HR</span>
-      <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] bg-[#3b82f6]"></i>HRV</span>
-    </div>
-    <div class="relative h-[220px] mb-3"><canvas id="wellChart"></canvas></div>
-    <div class="grid grid-cols-3 gap-x-6 mb-3">
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">RHR, 90 days</p>
-        <p class="font-mono text-2xl num font-medium mt-1" id="mRhrTrend">—</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">HRV, 90 days</p>
-        <p class="font-mono text-2xl num font-medium mt-1" id="mHrvTrend">—</p></div>
-      <div><p class="lbl text-zinc-400 dark:text-zinc-600">VO₂ max</p>
-        <p class="font-mono text-2xl num font-medium mt-1" id="mVo2">—</p></div>
-    </div>
-    <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
-      Ignore the daily wobble. RHR drifting down and HRV drifting up is what a year of good adaptation looks like.
-    </p>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Fitness, fatigue and form</p>
+  <div class="flex gap-5 text-[11px] text-zinc-500 dark:text-zinc-400 mb-2">
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] bg-[#3b82f6]"></i>Fitness</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-[2px] border-t border-dashed border-[#f97316]"></i>Fatigue</span>
+    <span class="flex items-center gap-1.5"><i class="inline-block w-3 h-3 rounded-sm bg-emerald-500/25"></i>Form</span>
+  </div>
+  <div class="relative h-[220px] mb-3"><canvas id="loadChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-10 max-w-xl">
+    Form is fitness minus fatigue. <b class="not-italic font-medium">Deeply negative form during a build is correct and expected.</b>
+    You want it climbing back toward zero in the ten days before anything you care about racing. Chronically
+    negative for months without a recovery week is how people arrive at December injured rather than sharp.
+  </p>
 
-    <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Kilometres, year to date</p>
-    <div class="flex items-baseline gap-4 flex-wrap">
-      <p class="font-mono text-5xl num font-semibold tracking-tight" id="mYtd">—</p>
-      <p class="text-[13px] text-zinc-500 dark:text-zinc-400" id="sYtd"></p>
-    </div>
-    <div class="h-px bg-zinc-200 dark:bg-zinc-800 mt-4 relative max-w-xl">
-      <div id="ytdBar" class="h-[3px] -mt-[1px] bg-zinc-900 dark:bg-zinc-100" style="width:0%"></div>
-      <div id="ytdPace" class="absolute top-0 h-[11px] -mt-[5px] w-px bg-rose-600 dark:bg-rose-400" style="left:0%"></div>
-    </div>
-    <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mt-3 max-w-xl">
-      The red tick is where you would be if you had run the annual target evenly across the year.
-    </p>
-  </section>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Sleep · last 8 weeks</p>
+  <div class="relative h-[190px] mb-3"><canvas id="sleepChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xl">
+    The largest modifiable lever you have, and the one most likely to explain a bad block.
+    <b class="not-italic font-medium">The line is your seven-night average; that is the number that matters</b>, not any single night.
+    If it sits under seven hours for a fortnight, no amount of training design compensates.
+  </p>
+</section>
 
-  <!-- ══════════ 5 · PACES ══════════ -->
-  <section class="border-t border-zinc-200 dark:border-zinc-800 pt-8">
-    <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-6">§5 &nbsp;Paces and zones</h2>
-    <table class="w-full text-[15px]">
-      <thead><tr class="border-b border-zinc-200 dark:border-zinc-800">
-        <th class="lbl text-zinc-400 dark:text-zinc-600 text-left font-normal pb-2 w-1/3">Effort</th>
-        <th class="lbl text-zinc-400 dark:text-zinc-600 text-left font-normal pb-2 w-1/3">Pace</th>
-        <th class="lbl text-zinc-400 dark:text-zinc-600 text-left font-normal pb-2 w-1/3">Heart rate</th>
-      </tr></thead>
-      <tbody class="divide-y divide-zinc-100 dark:divide-zinc-900">
-        <tr><td class="py-2.5">Easy</td><td class="py-2.5 font-mono num text-[14px]">5:55–6:10</td><td class="py-2.5 font-mono num text-[14px]">under 145</td></tr>
-        <tr><td class="py-2.5">Steady</td><td class="py-2.5 font-mono num text-[14px]">5:25–5:35</td><td class="py-2.5 font-mono num text-[14px]">150–158</td></tr>
-        <tr><td class="py-2.5">Threshold</td><td class="py-2.5 font-mono num text-[14px]">~4:50</td><td class="py-2.5 font-mono num text-[14px]">168–175</td></tr>
-        <tr><td class="py-2.5">Strides</td><td class="py-2.5 font-mono num text-[14px]">~3:50 feel</td><td class="py-2.5 font-mono num text-[14px]">not measured</td></tr>
-      </tbody>
-    </table>
-    <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mt-4 max-w-xl">
-      Threshold at the Étangs runs on heart rate, not pace. The loop rolls, let the pace wander.
-    </p>
-  </section>
+<!-- ═════════ §6 LOG ═════════ -->
+<section class="border-t border-zinc-200 dark:border-zinc-800 pt-8 mb-14">
+  <h2 class="lbl text-zinc-400 dark:text-zinc-600 mb-2">§6&nbsp; Daily check-in</h2>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mb-5 max-w-xl">
+    The one thing your watch cannot see. Saves instantly in this browser.
+  </p>
+  <div class="flex gap-5 flex-wrap items-end mb-1">
+    <div class="flex flex-col gap-1.5">
+      <label class="lbl text-zinc-400 dark:text-zinc-600" for="niggle">Niggle</label>
+      <select id="niggle" class="bg-transparent border-0 border-b border-zinc-300 dark:border-zinc-700 text-[15px] py-1 pr-6 focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100">
+        <option value="">none</option><option>calf</option><option>achilles</option><option>knee</option>
+        <option>hamstring</option><option>hip</option><option>shin</option><option>foot</option>
+        <option>ITB</option><option>back</option><option>other</option>
+      </select>
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <label class="lbl text-zinc-400 dark:text-zinc-600" for="sev">Severity 1–3</label>
+      <input type="number" id="sev" min="1" max="3" placeholder="–" class="w-16 bg-transparent border-0 border-b border-zinc-300 dark:border-zinc-700 text-[15px] py-1 num focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100">
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <label class="lbl text-zinc-400 dark:text-zinc-600" for="feel">Physical feel 1–10</label>
+      <input type="number" id="feel" min="1" max="10" placeholder="–" class="w-16 bg-transparent border-0 border-b border-zinc-300 dark:border-zinc-700 text-[15px] py-1 num focus:outline-none focus:border-zinc-900 dark:focus:border-zinc-100">
+    </div>
+    <span id="savedMsg" class="font-mono text-[11px] text-emerald-700 dark:text-emerald-400 pb-2 opacity-0 transition-opacity">saved</span>
+  </div>
+  <p id="niggleWarn" class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mt-3 max-w-xl"></p>
+  <div class="relative h-[150px] mt-6"><canvas id="feelChart"></canvas></div>
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mt-2 max-w-xl">
+    Physical feel over the last month. When this diverges from your HRV — feeling flat while the numbers look
+    fine — trust the feeling. It is usually three days ahead of the sensors.
+  </p>
+</section>
 
-  <p class="lbl text-zinc-300 dark:text-zinc-700 mt-14" id="stamp">&nbsp;</p>
+<footer class="border-t border-zinc-200 dark:border-zinc-800 pt-6">
+  <p class="lbl text-zinc-300 dark:text-zinc-700" id="stamp">&nbsp;</p>
+</footer>
+
 </main>
 
 <script>
-/* ═══════════════════════════════════════════════════════════════════
-   SETTINGS — the only part you edit by hand.
-   ═══════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════
+   No plan, no targets, no dates. Everything is derived from your data,
+   apart from the four physiological thresholds declared just below.
+   ══════════════════════════════════════════════════════════════ */
 
-const ANNUAL_KM_TARGET = 2000;
-const EASY_HR_CEILING  = 150;
-const STEP_BASELINE    = 10000;
-const REF_HR           = 145;
-
-const PLAN = [
-  { date:"2026-08-16", title:"15 km long run",                 desc:"Bois de la Cambre · early · HR cap 145",     key:false },
-  { date:"2026-08-18", title:"8 km easy + 6×20s strides",      desc:"Streets",                                    key:false },
-  { date:"2026-08-19", title:"8 km easy",                       desc:"Streets",                                    key:false },
-  { date:"2026-08-20", title:"7 km easy + 6×20s strides",      desc:"Streets",                                    key:false },
-  { date:"2026-08-22", title:"5 km very easy",                  desc:"Shakeout",                                   key:false },
-  { date:"2026-08-23", title:"14 km long run",                  desc:"Bois de la Cambre",                          key:false },
-  { date:"2026-08-25", title:"10 km with 20 min tempo",         desc:"Étangs · HR 168–172",                        key:true  },
-  { date:"2026-08-26", title:"8 km easy",                       desc:"Streets",                                    key:false },
-  { date:"2026-08-27", title:"8 km easy + 6×20s strides",      desc:"Streets",                                    key:false },
-  { date:"2026-08-29", title:"5 km very easy",                  desc:"Shakeout",                                   key:false },
-  { date:"2026-08-30", title:"15 km long run",                  desc:"Last 15 min steady",                         key:false },
-  { date:"2026-09-01", title:"10 km with 2×12 min threshold",   desc:"Étangs · 3 min jog · HR 168–175",            key:true  },
-  { date:"2026-09-02", title:"9 km easy",                       desc:"Streets",                                    key:false },
-  { date:"2026-09-03", title:"9 km with 8×45s uphill",          desc:"Parc Duden · jog down",                      key:true  },
-  { date:"2026-09-05", title:"6 km very easy",                  desc:"Shakeout",                                   key:false },
-  { date:"2026-09-06", title:"16 km long run",                  desc:"Last 20 min steady",                         key:false },
-  { date:"2026-09-08", title:"8 km easy + 6×20s strides",      desc:"Down week",                                  key:false },
-  { date:"2026-09-09", title:"8 km easy",                       desc:"Streets",                                    key:false },
-  { date:"2026-09-10", title:"9 km with 3×6 min threshold",     desc:"Étangs · 2 min jog",                         key:true  },
-  { date:"2026-09-12", title:"5 km very easy + 4×20s strides",  desc:"Legs open",                                  key:false },
-  { date:"2026-09-13", title:"5k time trial",                   desc:"Cinquantenaire · measure a lap first",       key:true  },
-];
-
-const WEEKLY_TARGET = {
-  "2026-08-10":42, "2026-08-17":42, "2026-08-24":46, "2026-08-31":50, "2026-09-07":40,
-  "2026-09-14":52, "2026-09-21":56, "2026-09-28":60, "2026-10-05":46, "2026-10-12":58,
-  "2026-10-19":62, "2026-10-26":50, "2026-11-02":62, "2026-11-09":65, "2026-11-16":55,
-  "2026-11-23":62, "2026-11-30":58, "2026-12-07":50, "2026-12-14":45, "2026-12-21":40,
-};
-
-/* ═══════════════════════════════════════════════════════════════════
-   Machinery
-   ═══════════════════════════════════════════════════════════════════ */
-
-const $ = (id) => document.getElementById(id);
+const $  = (id) => document.getElementById(id);
 const iso = (d) => new Date(d).toISOString().slice(0,10);
 const TODAY = iso(new Date());
 const mean = (a) => a.length ? a.reduce((s,x)=>s+x,0)/a.length : null;
-const fix = (v,d=0) => (v==null || !isFinite(v)) ? "—" : Number(v).toFixed(d);
+const fix = (v,d=0) => (v==null||!isFinite(v)) ? "—" : Number(v).toFixed(d);
 const mmss = (s) => (s==null||!isFinite(s)) ? "—" : Math.floor(s/60)+":"+String(Math.round(s%60)).padStart(2,"0");
 const monday = (d) => { const x=new Date(d); const g=(x.getDay()+6)%7; x.setDate(x.getDate()-g); x.setHours(12,0,0,0); return iso(x); };
 const shortDate = (d) => new Date(d).toLocaleDateString("en-GB",{day:"numeric",month:"short"});
+const pct = (a,b) => (b && isFinite(a/b)) ? (a/b-1)*100 : null;
 
 const DK = matchMedia("(prefers-color-scheme: dark)").matches;
 const GRID = DK ? "#27272a" : "#e7e5e0";
 const TICK = DK ? "#71717a" : "#a1a1aa";
-const BLUE = "#3b82f6", ORANGE = "#f97316";
-const GOOD = DK ? "text-emerald-400" : "text-emerald-700";
-const WARN = DK ? "text-amber-400"   : "text-amber-700";
-const BAD  = DK ? "text-rose-400"    : "text-rose-700";
-const tone = (el, cls) => { el.className = el.className.replace(/text-(emerald|amber|rose)-\d+/g,"").trim() + " " + cls; };
-
-$("cd").textContent = Math.max(0, Math.round((new Date("2026-12-31T00:00:00") - new Date(TODAY))/864e5));
+const BLUE="#3b82f6", ORANGE="#f97316", AMBER="#f59e0b", ROSE="#e11d48", GREEN="#10b981";
+const GOOD = DK?"text-emerald-400":"text-emerald-700";
+const WARN = DK?"text-amber-400":"text-amber-700";
+const BAD  = DK?"text-rose-400":"text-rose-700";
 
 Chart.defaults.font.family = "'IBM Plex Mono', monospace";
 Chart.defaults.font.size = 10;
 Chart.defaults.color = TICK;
 
-/* ---------- localStorage check-in ---------- */
-const LOGKEY = "gw-checkin-v3";
-const readLog  = () => { try { return JSON.parse(localStorage.getItem(LOGKEY)) || {}; } catch(e){ return {}; } };
-const writeLog = (o) => { try { localStorage.setItem(LOGKEY, JSON.stringify(o)); } catch(e){} };
+/* ---------- thresholds ----------
+   Physiological boundaries, not a schedule. They only change when your
+   zones actually change, which is once or twice a year at most.        */
+const S = {
+  easy:   150,   // runs averaging below this count as easy
+  hard:   165,   // runs averaging at or above this count as hard
+  ref:    145,   // heart rate the efficiency figure is normalised to
+  annual: 2000,  // kilometres you intend to run this year
+};
 
-(function prime(){
-  const t = readLog()[TODAY]; if (!t) return;
-  if (t.niggle) $("niggle").value = t.niggle;
-  if (t.sev != null)  $("sev").value  = t.sev;
-  if (t.feel != null) $("feel").value = t.feel;
-})();
+const LKEY = "gw-checkin-v3";
+const readL = () => { try { return JSON.parse(localStorage.getItem(LKEY))||{}; } catch(e){ return {}; } };
+
+(function prime(){ const t = readL()[TODAY]; if(!t) return;
+  if(t.niggle) $("niggle").value=t.niggle;
+  if(t.sev!=null) $("sev").value=t.sev;
+  if(t.feel!=null) $("feel").value=t.feel; })();
 
 function saveCheckin(){
-  const log = readLog();
-  log[TODAY] = {
-    niggle: $("niggle").value || null,
-    sev:  $("sev").value  === "" ? null : Number($("sev").value),
-    feel: $("feel").value === "" ? null : Number($("feel").value),
-  };
-  writeLog(log);
-  const m = $("savedMsg");
-  m.style.opacity = "1";
-  clearTimeout(saveCheckin._t);
-  saveCheckin._t = setTimeout(()=>{ m.style.opacity = "0"; }, 1800);
-  niggleCheck();
+  const log = readL();
+  log[TODAY] = { niggle:$("niggle").value||null,
+    sev:$("sev").value===""?null:Number($("sev").value),
+    feel:$("feel").value===""?null:Number($("feel").value) };
+  try { localStorage.setItem(LKEY, JSON.stringify(log)); } catch(e){}
+  const m=$("savedMsg"); m.style.opacity="1";
+  clearTimeout(saveCheckin._t); saveCheckin._t=setTimeout(()=>m.style.opacity="0",1800);
+  niggleCheck(); drawFeel();
 }
 ["niggle","sev","feel"].forEach(id => $(id).addEventListener("change", saveCheckin));
 
 function niggleCheck(){
-  const log = readLog(); const el = $("niggleWarn");
-  let part = null, streak = 0;
-  for (let i = 0; i < 14; i++){
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const e = log[iso(d)];
-    if (e && e.niggle && e.sev >= 2){
-      if (part === null || part === e.niggle){ part = e.niggle; streak++; } else break;
-    } else break;
+  const log=readL(), el=$("niggleWarn");
+  let part=null, streak=0;
+  for(let i=0;i<14;i++){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const e=log[iso(d)];
+    if(e && e.niggle && e.sev>=2){ if(part===null||part===e.niggle){part=e.niggle;streak++;} else break; }
+    else break;
   }
-  if (streak >= 3){
-    el.className = "whisper text-[13px] mt-3 max-w-xl " + BAD;
-    el.textContent = "Your " + part + " has been a " + 2 + " or worse for " + streak +
-      " days running. That is no longer a niggle. Take the pressure off it now, or take four weeks off later.";
+  if(streak>=3){
+    el.className="whisper text-[13px] mt-3 max-w-xl "+BAD;
+    el.textContent="Your "+part+" has been a 2 or worse for "+streak+" days running. That is no longer a niggle.";
   } else {
-    el.className = "whisper text-[13px] text-zinc-500 dark:text-zinc-400 mt-3 max-w-xl";
-    el.textContent = "Saves instantly, in this browser. Ten seconds a day, and it catches what no sensor can.";
+    el.className="whisper text-[13px] text-zinc-500 dark:text-zinc-400 mt-3 max-w-xl";
+    el.textContent="A niggle logged at severity 2 or higher for three days running will flag here.";
   }
 }
 niggleCheck();
 
-/* ---------- data load, with mock fallback for preview ---------- */
+/* ---------- tiles ---------- */
+function tile(host, label, value, sub, cls){
+  const d=document.createElement("div");
+  d.innerHTML='<p class="lbl text-zinc-400 dark:text-zinc-600">'+label+'</p>'+
+    '<p class="font-mono text-3xl num font-medium mt-1 '+(cls||"")+'">'+value+'</p>'+
+    '<p class="text-[12px] text-zinc-500 dark:text-zinc-400 leading-tight mt-0.5">'+(sub||"")+'</p>';
+  $(host).append(d);
+}
+const arrow = (v, goodUp=true) => v==null ? "" :
+  (v>0?"▲ ":"▼ ") + Math.abs(v).toFixed(1);
+const toneOf = (v, goodUp=true, warnAt=0, badAt=0) => {
+  if (v==null) return "";
+  const g = goodUp ? v>0 : v<0;
+  return g ? GOOD : (Math.abs(v) > badAt ? BAD : WARN);
+};
+
+/* ---------- chart helper ---------- */
+function mk(id, cfg){
+  const base = { responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ y:{ border:{display:false}, grid:{color:GRID,drawTicks:false}, ticks:{padding:8} },
+             x:{ border:{display:false}, grid:{display:false}, ticks:{maxRotation:0,maxTicksLimit:8} } } };
+  cfg.options = deepMerge(base, cfg.options||{});
+  return new Chart($(id), cfg);
+}
+function deepMerge(a,b){ const o={...a};
+  for(const k in b){ o[k] = (b[k] && typeof b[k]==="object" && !Array.isArray(b[k])) ? deepMerge(a[k]||{}, b[k]) : b[k]; }
+  return o; }
+
+/* ---------- load ---------- */
 async function loadData(){
-  try {
-    const r = await fetch("./data.json?t=" + Date.now());
-    if (!r.ok) throw new Error("status " + r.status);
+  try{
+    const r = await fetch("./data.json?t="+Date.now());
+    if(!r.ok) throw 0;
     const j = await r.json();
-    if (!j || !Array.isArray(j.activities) || !j.activities.length) throw new Error("empty");
-    return { data: j, mock: false };
-  } catch (e) {
-    return { data: buildMock(), mock: true };
-  }
+    if(!j || !Array.isArray(j.activities) || !j.activities.length) throw 0;
+    return { data:j, mock:false };
+  }catch(e){ return { data:buildMock(), mock:true }; }
 }
 
-/* Deterministic mock: a Brussels runner mid-block, five sessions a week,
-   fitness rising, efficiency improving, resting HR drifting down. */
 function buildMock(){
-  let seed = 20260815;
-  const rnd = () => { seed = (seed * 1664525 + 1013904223) % 4294967296; return seed / 4294967296; };
-  const jit = (m) => (rnd() - 0.5) * 2 * m;
-  const DAYS = 190;
-  const wellness = [], activities = [];
-
-  for (let i = 0; i < DAYS; i++){
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const t = (DAYS - i) / DAYS;                       // 0 old → 1 today
-    const date = iso(d);
-    const ctl = 22 + 34 * t + jit(1.4);
-    wellness.push({
-      date,
-      rhr:  Math.round(51 - 5.0 * t + jit(1.6)),
-      hrv:  Math.round(50 + 12 * t + jit(4.5)),
-      ctl:  Math.round(ctl * 10) / 10,
-      atl:  Math.round(ctl * (0.78 + 0.5 * rnd()) * 10) / 10,
-      vo2max: Math.round((51.6 + 3.4 * t) * 10) / 10,
-      steps: Math.round(8200 + 4200 * rnd()),
-      sleepHours: Math.round((6.6 + 1.9 * rnd()) * 10) / 10,
-      sleepScore: Math.round(66 + 26 * rnd()),
-    });
-
-    const dow = d.getDay();
-    if (dow === 1 || dow === 5) continue;              // rest Monday and Friday
-    const isLong = dow === 0;
-    const isQual = dow === 2 || (dow === 4 && rnd() > 0.55);
-    const km  = isLong ? 14 + 6 * rnd() : isQual ? 9 + 2.5 * rnd() : 6.5 + 3.5 * rnd();
-    const hr  = isQual ? Math.round(158 + 9 * rnd()) : Math.round(138 + 10 * rnd());
-    // metres per beat improves through the block
-    const mpb = (isQual ? 1.24 : 1.13) + 0.17 * t + jit(0.035);
-    const mins = km * 1000 / (mpb * hr);
-    activities.push({
-      date, type: "Run", isRun: true,
-      name: isLong ? "Bois de la Cambre" : isQual ? "Étangs d'Ixelles" : "Saint-Gilles",
-      km: Math.round(km * 100) / 100,
-      minutes: Math.round(mins * 10) / 10,
-      paceSecPerKm: Math.round(mins * 60 / km),
-      hr, maxHr: hr + Math.round(14 + 12 * rnd()),
-      metresPerBeat: Math.round(mpb * 1000) / 1000,
-      cadence: Math.round(170 + 5 * rnd()),
-      load: Math.round(km * (isQual ? 8.5 : 5.2)),
-      decoupling: isLong ? Math.round((3.1 + 5.5 * rnd() - 3 * t) * 10) / 10 : null,
-      rpe: isQual ? Math.round(6 + 2 * rnd()) : Math.round(3 + 2 * rnd()),
-    });
+  let seed=20260815; const rnd=()=>{seed=(seed*1664525+1013904223)%4294967296;return seed/4294967296;};
+  const jit=(m)=>(rnd()-0.5)*2*m;
+  const DAYS=200, wellness=[], activities=[];
+  for(let i=0;i<DAYS;i++){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const t=(DAYS-i)/DAYS, date=iso(d);
+    const ctl=20+36*t+jit(1.4);
+    wellness.push({ date, rhr:Math.round(51-5*t+jit(1.6)), hrv:Math.round(49+13*t+jit(4.5)),
+      ctl:Math.round(ctl*10)/10, atl:Math.round(ctl*(0.76+0.55*rnd())*10)/10,
+      vo2max:Math.round((51.4+3.6*t)*10)/10, steps:Math.round(8000+4600*rnd()),
+      sleepHours:Math.round((6.5+2*rnd())*10)/10, sleepScore:Math.round(64+28*rnd()) });
+    const dow=d.getDay();
+    if(dow===1||dow===5) continue;
+    const isLong=dow===0, isQual=dow===2||(dow===4&&rnd()>0.55);
+    const km=isLong?14+6*rnd():isQual?9+2.5*rnd():6.5+3.5*rnd();
+    const hr=isQual?Math.round(159+9*rnd()):Math.round(137+11*rnd());
+    const mpb=(isQual?1.25:1.12)+0.18*t+jit(0.035);
+    const mins=km*1000/(mpb*hr);
+    activities.push({ date, type:"Run", isRun:true,
+      name:isLong?"Bois de la Cambre":isQual?"Étangs d'Ixelles":"Saint-Gilles",
+      km:Math.round(km*100)/100, minutes:Math.round(mins*10)/10,
+      paceSecPerKm:Math.round(mins*60/km), hr, maxHr:hr+Math.round(14+12*rnd()),
+      metresPerBeat:Math.round(mpb*1000)/1000, cadence:Math.round(169+6*rnd()),
+      load:Math.round(km*(isQual?8.5:5.2)),
+      decoupling:isLong?Math.round((3.4+5.5*rnd()-3*t)*10)/10:null,
+      rpe:isQual?Math.round(6+2*rnd()):Math.round(3+2*rnd()) });
   }
-  return { generated: new Date().toISOString(), activities, wellness, mock: true };
+  return { generated:new Date().toISOString(), activities, wellness };
 }
 
-/* ---------- render ---------- */
-loadData().then(({ data, mock }) => {
-  if (mock) $("mockFlag").classList.remove("hidden");
-  render(data);
-});
+loadData().then(({data,mock}) => { if(mock) $("mockFlag").classList.remove("hidden"); render(data); });
 
+/* ══════════════════════════════════════════════════════════════ */
 function render(data){
-  const acts = (data.activities || []).filter(a => a.isRun !== false);
-  const well = (data.wellness   || []).slice().sort((a,b) => a.date < b.date ? 1 : -1);
-  const log  = readLog();
+  const acts = (data.activities||[]).filter(a=>a.isRun!==false).slice().sort((a,b)=>a.date<b.date?1:-1);
+  const well = (data.wellness||[]).slice().sort((a,b)=>a.date<b.date?1:-1);
+  const log  = readL();
 
-  const kmByDate = {}, weekly = {};
-  acts.forEach(a => {
-    kmByDate[a.date] = (kmByDate[a.date] || 0) + a.km;
-    const m = monday(a.date); weekly[m] = (weekly[m] || 0) + a.km;
-  });
-  const actByDate = {};
-  acts.forEach(a => { if (!actByDate[a.date]) actByDate[a.date] = a; });
+  const ser = (k,n,skip=0) => well.filter(w=>w[k]!=null).slice(skip,skip+n).map(w=>w[k]);
+  const since = (days) => { const d=new Date(); d.setDate(d.getDate()-days); return iso(d); };
+  const between = (from,to) => acts.filter(a => a.date>=from && a.date<to);
 
-  const series = (k, n, skip = 0) => well.filter(w => w[k] != null).slice(skip, skip + n).map(w => w[k]);
+  const kmByDate={}, weekly={};
+  acts.forEach(a=>{ kmByDate[a.date]=(kmByDate[a.date]||0)+a.km;
+    const m=monday(a.date); weekly[m]=(weekly[m]||0)+a.km; });
 
-  /* ═══ §1 TODAY ═══ */
-  const hrvBase = mean(series("hrv", 30, 1));
-  const rhrBase = mean(series("rhr", 30, 1));
-  const latest  = well.find(w => w.hrv != null || w.rhr != null) || {};
-  const hDev = (latest.hrv != null && hrvBase) ? latest.hrv - hrvBase : null;
-  const rDev = (latest.rhr != null && rhrBase) ? latest.rhr - rhrBase : null;
+  /* ── §1 tiles ── */
+  const latest = well[0]||{};
+  const hrvBase = mean(ser("hrv",30,1)), rhrBase = mean(ser("rhr",30,1));
+  const hDev = latest.hrv!=null&&hrvBase ? latest.hrv-hrvBase : null;
+  const rDev = latest.rhr!=null&&rhrBase ? latest.rhr-rhrBase : null;
+  const sleep7 = mean(ser("sleepHours",7)), sleep28 = mean(ser("sleepHours",28));
+  const ss = well.find(w=>w.sleepScore!=null);
+  const stepDay = well.find(w=>w.steps!=null&&w.date!==TODAY)||well.find(w=>w.steps!=null);
 
-  if (latest.hrv != null){
-    $("mHrv").textContent = Math.round(latest.hrv);
-    if (hrvBase){
-      $("sHrv").textContent = (hDev>=0?"+":"") + fix(hDev,0) + " vs " + fix(hrvBase,0) + " baseline";
-      tone($("mHrv"), hDev < -8 ? BAD : hDev < -4 ? WARN : GOOD);
-    }
-  }
-  if (latest.rhr != null){
-    $("mRhr").textContent = Math.round(latest.rhr);
-    if (rhrBase){
-      $("sRhr").textContent = (rDev>=0?"+":"") + fix(rDev,0) + " vs " + fix(rhrBase,0) + " baseline";
-      tone($("mRhr"), rDev > 4 ? BAD : rDev > 2 ? WARN : GOOD);
-    }
-  }
+  tile("tilesRecovery","HRV", fix(latest.hrv,0),
+    hrvBase ? (hDev>=0?"+":"")+fix(hDev,0)+" vs "+fix(hrvBase,0)+" baseline" : "no baseline yet",
+    hDev==null?"":hDev<-8?BAD:hDev<-4?WARN:GOOD);
+  tile("tilesRecovery","Resting HR", fix(latest.rhr,0),
+    rhrBase ? (rDev>=0?"+":"")+fix(rDev,0)+" vs "+fix(rhrBase,0)+" baseline" : "no baseline yet",
+    rDev==null?"":rDev>4?BAD:rDev>2?WARN:GOOD);
+  tile("tilesRecovery","Sleep, 7 nights", fix(sleep7,1),
+    sleep28 ? "hours · 28-night "+fix(sleep28,1) : "hours",
+    sleep7==null?"":sleep7<6.8?BAD:sleep7<7.3?WARN:GOOD);
+  tile("tilesRecovery","Sleep score", ss?fix(ss.sleepScore,0):"—",
+    ss?("out of 100 · "+(ss.date===TODAY?"last night":shortDate(ss.date))):"",
+    !ss?"":ss.sleepScore<60?BAD:ss.sleepScore<75?WARN:GOOD);
 
-  const sleepNow = well.find(w => w.sleepHours != null);
-  const sleep7   = mean(series("sleepHours", 7));
-  if (sleepNow){
-    $("mSleep").textContent = fix(sleepNow.sleepHours, 1);
-    if (sleep7) $("sSleep").textContent = "hours · 7-night avg " + fix(sleep7,1);
-    tone($("mSleep"), sleepNow.sleepHours < 6.5 ? BAD : sleepNow.sleepHours < 7.2 ? WARN : GOOD);
-  }
-  const ss = well.find(w => w.sleepScore != null);
-  if (ss){
-    $("mSleepScore").textContent = Math.round(ss.sleepScore);
-    $("sSleepScore").textContent = ss.date === TODAY ? "out of 100, last night" : "out of 100 · " + shortDate(ss.date);
-    tone($("mSleepScore"), ss.sleepScore < 60 ? BAD : ss.sleepScore < 75 ? WARN : GOOD);
-  }
+  // efficiency
+  const eff = acts.filter(a=>a.metresPerBeat&&a.km>=5&&a.hr>=130&&a.hr<=158)
+    .map(a=>({date:a.date,v:a.metresPerBeat})).sort((x,y)=>x.date<y.date?-1:1);
+  const eff5 = mean(eff.slice(-5).map(e=>e.v));
+  const effPrev = mean(eff.slice(-12,-5).map(e=>e.v));
+  const effDelta = pct(eff5, effPrev);
 
-  const stepDay = well.find(w => w.steps != null && w.date !== TODAY) || well.find(w => w.steps != null);
-  if (stepDay){
-    $("mSteps").textContent = stepDay.steps.toLocaleString("en-GB");
-    const pct = Math.min(140, stepDay.steps / STEP_BASELINE * 100);
-    $("stepBar").style.width = (pct / 1.4) + "%";
-    $("sSteps").textContent = (stepDay.steps >= STEP_BASELINE ? "+" : "") +
-      (stepDay.steps - STEP_BASELINE).toLocaleString("en-GB") + " against 10,000";
-    tone($("mSteps"), stepDay.steps < 7000 ? WARN : GOOD);
-  }
+  tile("tilesPerf","Efficiency", eff5?fix(eff5,3):"—",
+    eff5 ? "m/beat · "+mmss(1000/(eff5*S.ref)*60)+"/km at "+S.ref : "need 5 easy runs",
+    effDelta==null?"":effDelta>1?GOOD:effDelta<-2?BAD:"");
+  tile("tilesPerf","Efficiency trend", effDelta!=null?(effDelta>=0?"+":"")+fix(effDelta,1)+"%":"—",
+    "last 5 runs vs previous 7", effDelta==null?"":effDelta>1?GOOD:effDelta<-2?BAD:WARN);
 
-  // verdict
-  const vt = $("verdictText"), vw = $("verdictWhy"), vb = $("verdict");
-  const reasons = [];
-  if (hDev != null) reasons.push("HRV " + (hDev>=0?"+":"") + fix(hDev,0));
-  if (rDev != null) reasons.push("resting HR " + (rDev>=0?"+":"") + fix(rDev,0));
-  if (sleep7 != null) reasons.push("7-night sleep " + fix(sleep7,1) + "h");
-  if (hDev == null && rDev == null){
-    vt.textContent = "No wellness data yet.";
-    vw.textContent = "Check that Garmin's sleep and wellness scopes are enabled on intervals.icu.";
-  } else if ((hDev != null && hDev < -8) || (rDev != null && rDev > 4)){
-    vb.className = "border-l-2 border-rose-600 dark:border-rose-400 pl-4 py-1 mb-8";
-    vt.className = "text-xl sm:text-2xl leading-snug " + BAD;
-    vt.textContent = "Rest, or run very easy at most.";
-    vw.textContent = "Your body is asking for a day. " + reasons.join(", ") + ". One session lost is cheap; three weeks lost is not.";
-  } else if ((hDev != null && hDev < -4) || (rDev != null && rDev > 2) || (sleep7 != null && sleep7 < 6.8)){
-    vb.className = "border-l-2 border-amber-500 pl-4 py-1 mb-8";
-    vt.className = "text-xl sm:text-2xl leading-snug " + WARN;
-    vt.textContent = "Run easy. Hold the key session.";
-    vw.textContent = reasons.join(", ") + ". Not alarming, but not a day to add intensity. If tomorrow reads the same, take it off.";
+  const vo = well.find(w=>w.vo2max!=null);
+  const voOld = well.filter(w=>w.vo2max!=null)[89];
+  tile("tilesPerf","VO₂ max", vo?fix(vo.vo2max,1):"—",
+    voOld ? (vo.vo2max-voOld.vo2max>=0?"+":"")+fix(vo.vo2max-voOld.vo2max,1)+" over 90 days" : "slow moving");
+
+  const longs = acts.filter(a=>a.km>=12&&a.decoupling!=null).slice(0,6);
+  const dc = longs.length?mean(longs.map(a=>a.decoupling)):null;
+  tile("tilesPerf","Decoupling", dc!=null?fix(dc,1)+"%":"—", "last 6 long runs",
+    dc==null?"":dc<5?GOOD:dc<10?WARN:BAD);
+
+  const km7  = acts.filter(a=>a.date>=since(7)).reduce((s,a)=>s+a.km,0);
+  const km28 = acts.filter(a=>a.date>=since(28)).reduce((s,a)=>s+a.km,0);
+  const km28prev = between(since(56),since(28)).reduce((s,a)=>s+a.km,0);
+  const volDelta = pct(km28, km28prev);
+
+  tile("tilesTraining","Last 7 days", fix(km7,1),
+    km28 ? "km · weekly avg "+fix(km28/4,1) : "km",
+    km28 ? (km7 >= km28/4*0.9 ? GOOD : km7 >= km28/4*0.6 ? WARN : BAD) : "");
+  tile("tilesTraining","28-day volume", fix(km28,0),
+    volDelta!=null ? "km · "+(volDelta>=0?"+":"")+fix(volDelta,0)+"% vs previous 28" : "km",
+    volDelta==null?"":volDelta>25?WARN:volDelta<-20?BAD:GOOD);
+
+  const lw = well.find(w=>w.ctl!=null)||{};
+  const form = (lw.ctl!=null&&lw.atl!=null) ? lw.ctl-lw.atl : null;
+  tile("tilesTraining","Fitness · form", lw.ctl!=null?fix(lw.ctl,0):"—",
+    form!=null ? "CTL · form "+(form>=0?"+":"")+fix(form,0) : "chronic load",
+    form==null?"":form<-25?BAD:form<-12?WARN:GOOD);
+
+  const wkRuns28 = acts.filter(a=>a.date>=since(28)&&a.hr!=null&&a.minutes);
+  const mins28 = wkRuns28.reduce((s,a)=>s+a.minutes,0);
+  const ez28 = wkRuns28.filter(a=>a.hr<S.easy).reduce((s,a)=>s+a.minutes,0);
+  const ezPct = mins28 ? Math.round(ez28/mins28*100) : null;
+  tile("tilesTraining","Easy share", ezPct!=null?ezPct+"%":"—","last 28 days · aim 80%",
+    ezPct==null?"":ezPct>=80?GOOD:ezPct>=65?WARN:BAD);
+
+  const lastRun = acts[0];
+  $("freshness").textContent = lastRun ? "last run "+shortDate(lastRun.date)+" · "+fix(lastRun.km,1)+" km" : "no runs yet";
+
+  /* ── headline ── */
+  let head, sub;
+  if (effDelta!=null && effDelta>1.5 && volDelta!=null && volDelta>-10){
+    head = "The training is working."; sub = "Efficiency is up "+fix(effDelta,1)+"% over your last five easy runs while volume held. That is the combination you want: doing the same work at a lower cardiac cost.";
+  } else if (hDev!=null&&hDev<-8 || (rDev!=null&&rDev>4)){
+    head = "Your body is asking for a day off."; sub = "Recovery markers are outside their normal range this morning. One easy day now is cheaper than three weeks later.";
+  } else if (volDelta!=null && volDelta<-25){
+    head = "Volume is sliding."; sub = "The last 28 days are "+fix(Math.abs(volDelta),0)+"% below the 28 before. Fitness follows consistency more closely than it follows any single session.";
+  } else if (ezPct!=null && ezPct<65){
+    head = "Too much of your running is moderate."; sub = "Only "+ezPct+"% of the last month was genuinely easy. This is the most common reason a block stalls despite good volume.";
+  } else if (effDelta!=null && Math.abs(effDelta)<=1.5){
+    head = "Holding steady."; sub = "Efficiency is flat across your recent easy runs. Fine during a maintenance phase, worth changing something if you meant to be building.";
   } else {
-    vb.className = "border-l-2 border-emerald-600 dark:border-emerald-400 pl-4 py-1 mb-8";
-    vt.className = "text-xl sm:text-2xl leading-snug " + GOOD;
-    vt.textContent = "Clear. Run the session as written.";
-    vw.textContent = reasons.join(", ") + ". Everything sits inside your normal range.";
+    head = "Building quietly."; sub = "Nothing is flashing. Keep the volume consistent and let the efficiency line accumulate evidence.";
+  }
+  $("headline").textContent = head; $("headsub").textContent = sub;
+
+  /* ── §2 signals ── */
+  const sig = [];
+  const push = (label, text, t) => sig.push([label,text,t]);
+
+  if (effDelta!=null)
+    push("Efficiency", effDelta>1 ? "Up "+fix(effDelta,1)+"% across your last five easy runs. You are covering more ground per heartbeat than a month ago."
+      : effDelta<-2 ? "Down "+fix(Math.abs(effDelta),1)+"%. Check heat, sleep and accumulated fatigue before concluding you have lost fitness."
+      : "Flat within "+fix(Math.abs(effDelta),1)+"%. Neither gaining nor losing.", effDelta>1?"good":effDelta<-2?"bad":"flat");
+
+  if (dc!=null)
+    push("Durability", dc<5 ? "Decoupling averages "+fix(dc,1)+"% on long runs. Your aerobic base holds all the way through."
+      : dc<10 ? "Decoupling averages "+fix(dc,1)+"%. Acceptable, but the back half of long runs is costing you more than the front."
+      : "Decoupling averages "+fix(dc,1)+"%. You are outrunning your base on long runs. Slow them down.", dc<5?"good":dc<10?"flat":"bad");
+
+  if (ezPct!=null)
+    push("Intensity", ezPct>=80 ? ezPct+"% of the last month was easy. That is the right distribution."
+      : ezPct>=65 ? ezPct+"% easy. Drifting toward the middle. Slow your easy days by 20 seconds per kilometre."
+      : "Only "+ezPct+"% easy. Every run too hard to recover from, none hard enough to adapt to.", ezPct>=80?"good":ezPct>=65?"flat":"bad");
+
+  if (volDelta!=null)
+    push("Volume", volDelta>25 ? "Up "+fix(volDelta,0)+"% on the previous 28 days. Fast. Watch for niggles over the next fortnight."
+      : volDelta<-20 ? "Down "+fix(Math.abs(volDelta),0)+"% on the previous 28 days."
+      : "Within "+fix(Math.abs(volDelta),0)+"% of the previous 28 days. Steady.", Math.abs(volDelta)<=25?"good":volDelta>25?"flat":"bad");
+
+  const runsPerWk = {};
+  acts.filter(a=>a.date>=since(84)).forEach(a=>{ const m=monday(a.date); runsPerWk[m]=(runsPerWk[m]||0)+1; });
+  const wks = Object.values(runsPerWk), goodWks = wks.filter(n=>n>=4).length;
+  if (wks.length)
+    push("Consistency", goodWks+" of the last "+wks.length+" weeks had four or more runs"+
+      (goodWks/wks.length>=0.75 ? ". That is the number that predicts December." : ". Gaps cost more than any single missed session."),
+      goodWks/wks.length>=0.75?"good":goodWks/wks.length>=0.5?"flat":"bad");
+
+  if (lw.ctl>5 && lw.atl!=null){
+    const acwr = lw.atl/lw.ctl;
+    push("Load", acwr>=0.8&&acwr<=1.3 ? "Load ratio "+fix(acwr,2)+", inside the safe band."
+      : acwr>1.3 ? "Load ratio "+fix(acwr,2)+". Ramping faster than your base supports."
+      : "Load ratio "+fix(acwr,2)+". You are detraining rather than building.",
+      acwr>=0.8&&acwr<=1.3?"good":"bad");
   }
 
-  // next session
-  const next = PLAN.filter(p => !kmByDate[p.date] && p.date >= TODAY).sort((a,b) => a.date < b.date ? -1 : 1)[0];
-  if (next){
-    const diff = Math.round((new Date(next.date) - new Date(TODAY)) / 864e5);
-    const rel = diff === 0 ? "Today" : diff === 1 ? "Tomorrow" : "In " + diff + " days";
-    $("hDate").textContent = (new Date(next.date).toLocaleDateString("en-GB",{weekday:"long",day:"numeric",month:"long"}) + " · " + rel).toUpperCase();
-    $("hTitle").textContent = next.title;
-    $("hDet").textContent = next.desc;
-    if (next.key) $("hKey").classList.remove("hidden");
-  } else {
-    $("hDate").textContent = "BLOCK COMPLETE";
-    $("hTitle").textContent = "Every session logged";
-    $("hDet").textContent = "Time to plan the next block.";
+  const rhrNow=mean(ser("rhr",14)), rhrThen=mean(ser("rhr",14,76));
+  if (rhrNow&&rhrThen){
+    const d=rhrNow-rhrThen;
+    push("Cardiac", d<-0.5 ? "Resting HR is "+fix(Math.abs(d),1)+" lower than three months ago. Textbook adaptation."
+      : d>1.5 ? "Resting HR is "+fix(d,1)+" higher than three months ago. Worth watching alongside sleep."
+      : "Resting HR is unchanged over three months.", d<-0.5?"good":d>1.5?"bad":"flat");
   }
 
-  /* ═══ §2 THIS WEEK ═══ */
-  const thisMon = monday(new Date());
-  const target  = WEEKLY_TARGET[thisMon] || null;
-  const doneKm  = weekly[thisMon] || 0;
-  $("mKm").textContent = fix(doneKm, 1);
-  $("sKm").textContent = target ? "of " + target + " km target" : "no target set";
-  if (target){
-    $("kmBar").style.width = Math.min(100, doneKm/target*100) + "%";
-    tone($("mKm"), doneKm >= target*0.9 ? GOOD : doneKm >= target*0.6 ? WARN : BAD);
-  }
+  if (sleep7!=null)
+    push("Sleep", sleep7>=7.3 ? "Averaging "+fix(sleep7,1)+" hours over seven nights. Nothing to fix."
+      : sleep7>=6.8 ? "Averaging "+fix(sleep7,1)+" hours. Half an hour more would do more for you than any session."
+      : "Averaging "+fix(sleep7,1)+" hours. This will limit everything else on this page.",
+      sleep7>=7.3?"good":sleep7>=6.8?"flat":"bad");
 
-  const wkPlan = PLAN.filter(p => monday(p.date) === thisMon);
-  const wkDone = wkPlan.filter(p => kmByDate[p.date]).length;
-  $("mSess").textContent = wkPlan.length ? wkDone + " / " + wkPlan.length : "—";
-  if (wkPlan.length) tone($("mSess"), wkDone === wkPlan.length ? GOOD : "");
+  const longest28 = Math.max(0,...acts.filter(a=>a.date>=since(28)).map(a=>a.km));
+  if (longest28) push("Long run", "Longest in 28 days: "+fix(longest28,1)+" km.", "flat");
 
-  const wkRuns = acts.filter(a => monday(a.date) === thisMon && a.hr != null && a.minutes);
-  const wkMins = wkRuns.reduce((s,a) => s + a.minutes, 0);
-  const ezMins = wkRuns.filter(a => a.hr < EASY_HR_CEILING).reduce((s,a) => s + a.minutes, 0);
-  if (wkMins > 0){
-    const pct = Math.round(ezMins / wkMins * 100);
-    $("mEasy").textContent = pct + "%";
-    tone($("mEasy"), pct >= 80 ? GOOD : pct >= 65 ? WARN : BAD);
-  }
+  const dotCls = { good:"bg-emerald-500", flat:"bg-zinc-300 dark:bg-zinc-700", bad:"bg-rose-500" };
+  $("signals").innerHTML = sig.map(([l,t,tn]) =>
+    '<li class="flex gap-4 py-3 items-baseline">'+
+    '<span class="inline-block w-[7px] h-[7px] rounded-full shrink-0 mt-1.5 '+dotCls[tn]+'"></span>'+
+    '<span class="lbl text-zinc-400 dark:text-zinc-600 w-20 shrink-0 pt-0.5">'+l+'</span>'+
+    '<span class="flex-1 text-[15px] leading-snug">'+t+'</span></li>').join("");
 
-  const lad = $("ladder"); lad.innerHTML = "";
-  (wkPlan.length ? wkPlan : PLAN.slice(0,5)).forEach(p => {
-    const a = actByDate[p.date];
-    const missed = !a && p.date < TODAY;
-    const li = document.createElement("li");
-    li.className = "flex gap-4 py-3 items-baseline";
-    const dot = a ? "bg-emerald-600 dark:bg-emerald-400" : missed ? "bg-rose-600 dark:bg-rose-400" : "bg-zinc-300 dark:bg-zinc-700";
-    const strike = a ? "line-through text-zinc-400 dark:text-zinc-600" : "";
-    let detail;
-    if (a){
-      const bits = [fix(a.km,1) + " km", mmss(a.paceSecPerKm) + "/km"];
-      if (a.hr) bits.push(Math.round(a.hr) + " bpm");
-      if (a.rpe != null) bits.push("RPE " + a.rpe);
-      detail = bits.join(" · ");
-    } else detail = missed ? "Missed" : p.desc;
-    li.innerHTML =
-      '<span class="inline-block w-[7px] h-[7px] rounded-full shrink-0 mt-1.5 ' + dot + '"></span>' +
-      '<span class="font-mono text-[11px] uppercase tracking-wider text-zinc-400 dark:text-zinc-600 w-14 shrink-0">' +
-        new Date(p.date).toLocaleDateString("en-GB",{weekday:"short",day:"numeric"}) + '</span>' +
-      '<span class="flex-1 min-w-0"><span class="' + strike + '">' + p.title + '</span>' +
-        (p.key ? ' <span class="font-mono text-[10px] uppercase tracking-widest text-rose-700 dark:text-rose-400">key</span>' : '') +
-        '<span class="block text-[13px] text-zinc-500 dark:text-zinc-400 font-mono num mt-0.5">' + detail + '</span></span>';
-    lad.append(li);
-  });
+  /* ── §3 charts ── */
+  const roll = eff.map((_,i)=>mean(eff.slice(Math.max(0,i-4),i+1).map(e=>e.v)));
+  mk("effChart",{ type:"line", data:{ labels:eff.map(e=>shortDate(e.date)), datasets:[
+      { data:eff.map(e=>e.v), showLine:false, pointRadius:2.5, pointBackgroundColor:BLUE, borderColor:"transparent" },
+      { data:roll, borderColor:ORANGE, borderWidth:2, pointRadius:0, tension:.35 }]},
+    options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>fix(i.parsed.y,3)+" m/beat" } } },
+      scales:{ y:{ ticks:{ callback:(v)=>Number(v).toFixed(2) } }, x:{ ticks:{ maxTicksLimit:9 } } } } });
 
-  /* ═══ §3 THIS BLOCK ═══ */
-  const lw = well.find(w => w.ctl != null) || {};
-  if (lw.ctl != null) $("mCtl").textContent = fix(lw.ctl, 0);
-  if (lw.atl != null) $("mAtl").textContent = fix(lw.atl, 0);
-  if (lw.ctl > 5 && lw.atl != null){
-    const acwr = lw.atl / lw.ctl;
-    $("mAcwr").textContent = fix(acwr, 2);
-    $("acwrMark").style.left = Math.min(100, Math.max(0, acwr / 2 * 100)) + "%";
-    const inZone = acwr >= 0.8 && acwr <= 1.3;
-    tone($("mAcwr"), inZone ? GOOD : acwr > 1.5 ? BAD : WARN);
-    $("sAcwr").textContent = inZone ? "inside the safe zone" : acwr > 1.3 ? "ramping too fast" : "detraining";
-  }
-  if (lw.ctl != null && lw.ctl < 15) $("sCtl").textContent = "still building, read with caution";
+  const sc = acts.filter(a=>a.hr&&a.paceSecPerKm&&a.km>=3).slice(0,120).reverse();
+  mk("scatterChart",{ type:"scatter", data:{ datasets:[{
+      data: sc.map((a,i)=>({x:a.paceSecPerKm/60, y:a.hr, r:3, _i:i, _d:a.date})),
+      pointBackgroundColor: sc.map((_,i)=>{
+        const t=i/Math.max(1,sc.length-1);
+        return "rgba("+Math.round(203-144*t)+","+Math.round(213-83*t)+","+Math.round(225+21*t)+","+(0.4+0.6*t)+")"; }),
+      pointRadius:4, borderColor:"transparent" }]},
+    options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>
+        mmss(i.parsed.x*60)+"/km · "+Math.round(i.parsed.y)+" bpm · "+shortDate(i.raw._d) } } },
+      scales:{ x:{ type:"linear", grid:{color:GRID,drawTicks:false},
+                   title:{display:true,text:"pace min/km",color:TICK,font:{size:10}},
+                   ticks:{ callback:(v)=>mmss(v*60) } },
+               y:{ title:{display:true,text:"avg HR",color:TICK,font:{size:10}} } } } });
 
-  const longs = acts.filter(a => a.km >= 12 && a.decoupling != null).slice(0, 6);
-  if (longs.length){
-    const dc = mean(longs.map(a => a.decoupling));
-    $("mDecoup").textContent = fix(dc,1) + "%";
-    tone($("mDecoup"), dc < 5 ? GOOD : dc < 10 ? WARN : BAD);
-  }
+  const dcRuns = acts.filter(a=>a.km>=12&&a.decoupling!=null).slice(0,24).reverse();
+  mk("decoupChart",{ type:"bar", data:{ labels:dcRuns.map(a=>shortDate(a.date)), datasets:[{
+      data:dcRuns.map(a=>a.decoupling), borderRadius:3, maxBarThickness:16,
+      backgroundColor:dcRuns.map(a=>a.decoupling<5?GREEN:a.decoupling<10?AMBER:ROSE) }]},
+    options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>fix(i.parsed.y,1)+"% drift" } } },
+      scales:{ y:{ beginAtZero:true, ticks:{ callback:(v)=>v+"%" } } } } });
 
-  // chart 1 · CTL vs ATL
-  const wl = well.filter(w => w.ctl != null).slice(0, 182).reverse();
-  new Chart($("loadChart"), {
-    type: "line",
-    data: { labels: wl.map(w => shortDate(w.date)), datasets: [
-      { data: wl.map(w => w.ctl), borderColor: BLUE, borderWidth: 1.75, pointRadius: 0, tension: .3,
-        fill: true, backgroundColor: DK ? "rgba(59,130,246,.10)" : "rgba(59,130,246,.07)" },
-      { data: wl.map(w => w.atl), borderColor: ORANGE, borderWidth: 1.25, borderDash: [4,3], pointRadius: 0, tension: .3 },
-    ]},
-    options: { responsive:true, maintainAspectRatio:false, interaction:{mode:"index",intersect:false},
-      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(i)=> (i.datasetIndex?"Fatigue ":"Fitness ") + fix(i.parsed.y,0) } } },
-      scales:{ y:{ beginAtZero:true, border:{display:false}, grid:{color:GRID,drawTicks:false}, ticks:{padding:8} },
-               x:{ border:{display:false}, grid:{display:false}, ticks:{maxTicksLimit:8,maxRotation:0} } } }
-  });
+  /* ── §4 charts ── */
+  const wkKeys=[]; for(let i=25;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i*7); wkKeys.push(monday(d)); }
+  const wkVals = wkKeys.map(k=>Math.round((weekly[k]||0)*10)/10);
+  const wk4 = wkVals.map((_,i)=>mean(wkVals.slice(Math.max(0,i-3),i+1)));
+  mk("volChart",{ type:"bar", data:{ labels:wkKeys.map(shortDate), datasets:[
+      { data:wkVals, backgroundColor:BLUE, borderRadius:3, maxBarThickness:14, order:2 },
+      { type:"line", data:wk4, borderColor:ORANGE, borderWidth:2, pointRadius:0, tension:.3, order:1 }]},
+    options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>fix(i.parsed.y,1)+" km" } } },
+      scales:{ y:{ beginAtZero:true, ticks:{ callback:(v)=>v+" km" } } } } });
 
-  // chart 2 · aerobic efficiency
-  const eff = acts.filter(a => a.metresPerBeat && a.km >= 5 && a.hr >= 130 && a.hr <= 158)
-                  .map(a => ({ date:a.date, v:a.metresPerBeat }))
-                  .sort((x,y) => x.date < y.date ? -1 : 1);
-  const roll = eff.map((_,i) => mean(eff.slice(Math.max(0,i-4), i+1).map(e => e.v)));
-  new Chart($("effChart"), {
-    type: "line",
-    data: { labels: eff.map(e => shortDate(e.date)), datasets: [
-      { data: eff.map(e => e.v), showLine:false, pointRadius:2.5, pointBackgroundColor:BLUE, borderColor:"transparent" },
-      { data: roll, borderColor: ORANGE, borderWidth: 2, pointRadius: 0, tension: .35 },
-    ]},
-    options: { responsive:true, maintainAspectRatio:false,
-      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(i)=> fix(i.parsed.y,3) + " m/beat" } } },
-      scales:{ y:{ border:{display:false}, grid:{color:GRID,drawTicks:false}, ticks:{padding:8,callback:(v)=>Number(v).toFixed(2)} },
-               x:{ border:{display:false}, grid:{display:false}, ticks:{maxTicksLimit:9,maxRotation:0} } } }
-  });
+  // heatmap
+  const days=[]; const start=new Date(); start.setDate(start.getDate()-181);
+  const startM=new Date(monday(start));
+  for(let i=0;i<26*7;i++){ const d=new Date(startM); d.setDate(d.getDate()+i); days.push(iso(d)); }
+  const maxKm = Math.max(1,...Object.values(kmByDate));
+  const shade = (km) => !km ? "bg-zinc-100 dark:bg-zinc-900"
+    : km < maxKm*0.33 ? "bg-blue-200 dark:bg-blue-900"
+    : km < maxKm*0.66 ? "bg-blue-400 dark:bg-blue-700" : "bg-blue-600 dark:bg-blue-500";
+  let hm='<div class="grid grid-flow-col gap-[3px]" style="grid-template-rows:repeat(7,minmax(0,1fr))">';
+  days.forEach(d=>{ const km=kmByDate[d]||0;
+    hm+='<div class="cell '+shade(km)+'" title="'+d+(km?" · "+km.toFixed(1)+" km":" · rest")+'"></div>'; });
+  $("heatmap").innerHTML = hm+'</div>';
 
-  if (eff.length >= 4){
-    const last5 = mean(eff.slice(-5).map(e => e.v));
-    const prev5 = mean(eff.slice(-10,-5).map(e => e.v));
-    if (prev5){
-      const d = (last5 - prev5) / prev5 * 100;
-      $("mEffDelta").textContent = (d>=0?"+":"") + fix(d,1) + "%";
-      tone($("mEffDelta"), d > 1 ? GOOD : d < -2 ? BAD : "");
-    }
-    $("mEffPace").textContent = mmss(1000 / (last5 * REF_HR) * 60) + "/km";
-  }
+  const bands = wkKeys.map(k=>{
+    const r = acts.filter(a=>monday(a.date)===k && a.hr!=null && a.minutes);
+    return { e:r.filter(a=>a.hr<S.easy).reduce((s,a)=>s+a.minutes,0),
+             m:r.filter(a=>a.hr>=S.easy&&a.hr<S.hard).reduce((s,a)=>s+a.minutes,0),
+             h:r.filter(a=>a.hr>=S.hard).reduce((s,a)=>s+a.minutes,0) }; });
+  mk("intensityChart",{ type:"bar", data:{ labels:wkKeys.map(shortDate), datasets:[
+      { data:bands.map(b=>Math.round(b.e)), backgroundColor:BLUE,  stack:"s", maxBarThickness:14 },
+      { data:bands.map(b=>Math.round(b.m)), backgroundColor:AMBER, stack:"s", maxBarThickness:14 },
+      { data:bands.map(b=>Math.round(b.h)), backgroundColor:ROSE,  stack:"s", maxBarThickness:14 }]},
+    options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>
+        ["Easy","Moderate","Hard"][i.datasetIndex]+" "+i.parsed.y+" min" } } },
+      scales:{ x:{stacked:true}, y:{stacked:true, beginAtZero:true, ticks:{callback:(v)=>v+"m"}} } } });
 
-  /* ═══ §4 THIS YEAR ═══ */
-  const w90 = well.filter(w => w.rhr != null || w.hrv != null).slice(0, 90).reverse();
-  new Chart($("wellChart"), {
-    type: "line",
-    data: { labels: w90.map(w => shortDate(w.date)), datasets: [
-      { data: w90.map(w => w.rhr), borderColor: ORANGE, borderWidth: 1.25, borderDash:[4,3], pointRadius: 0, tension: .35, spanGaps: true },
-      { data: w90.map(w => w.hrv), borderColor: BLUE,   borderWidth: 1.75, pointRadius: 0, tension: .35, spanGaps: true },
-    ]},
-    options: { responsive:true, maintainAspectRatio:false, interaction:{mode:"index",intersect:false},
-      plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label:(i)=> (i.datasetIndex?"HRV ":"RHR ") + fix(i.parsed.y,0) } } },
-      scales:{ y:{ border:{display:false}, grid:{color:GRID,drawTicks:false}, ticks:{padding:8} },
-               x:{ border:{display:false}, grid:{display:false}, ticks:{maxTicksLimit:7,maxRotation:0} } } }
-  });
+  /* ── §5 charts ── */
+  const w120 = well.filter(w=>w.rhr!=null||w.hrv!=null).slice(0,120).reverse();
+  mk("wellChart",{ type:"line", data:{ labels:w120.map(w=>shortDate(w.date)), datasets:[
+      { data:w120.map(w=>w.rhr), borderColor:ORANGE, borderWidth:1.25, borderDash:[4,3], pointRadius:0, tension:.35, spanGaps:true },
+      { data:w120.map(w=>w.hrv), borderColor:BLUE, borderWidth:1.75, pointRadius:0, tension:.35, spanGaps:true }]},
+    options:{ interaction:{mode:"index",intersect:false},
+      plugins:{ tooltip:{ callbacks:{ label:(i)=>(i.datasetIndex?"HRV ":"RHR ")+fix(i.parsed.y,0) } } },
+      scales:{ x:{ ticks:{maxTicksLimit:7} } } } });
 
-  const rhrNow = mean(series("rhr",14)), rhrThen = mean(series("rhr",14,76));
-  if (rhrNow && rhrThen){
-    const d = rhrNow - rhrThen;
-    $("mRhrTrend").textContent = (d>=0?"+":"") + fix(d,1);
-    tone($("mRhrTrend"), d < -0.5 ? GOOD : d > 1.5 ? WARN : "");
-  }
-  const hrvNow = mean(series("hrv",14)), hrvThen = mean(series("hrv",14,76));
-  if (hrvNow && hrvThen){
-    const d = hrvNow - hrvThen;
-    $("mHrvTrend").textContent = (d>=0?"+":"") + fix(d,1);
-    tone($("mHrvTrend"), d > 1 ? GOOD : d < -3 ? WARN : "");
-  }
-  const vo = well.find(w => w.vo2max != null);
-  if (vo) $("mVo2").textContent = fix(vo.vo2max, 1);
+  const wl = well.filter(w=>w.ctl!=null).slice(0,182).reverse();
+  mk("loadChart",{ type:"line", data:{ labels:wl.map(w=>shortDate(w.date)), datasets:[
+      { data:wl.map(w=>w.ctl-w.atl), borderColor:"transparent", backgroundColor:"rgba(16,185,129,.20)",
+        fill:"origin", pointRadius:0, tension:.3 },
+      { data:wl.map(w=>w.ctl), borderColor:BLUE, borderWidth:1.75, pointRadius:0, tension:.3 },
+      { data:wl.map(w=>w.atl), borderColor:ORANGE, borderWidth:1.25, borderDash:[4,3], pointRadius:0, tension:.3 }]},
+    options:{ interaction:{mode:"index",intersect:false},
+      plugins:{ tooltip:{ callbacks:{ label:(i)=>["Form ","Fitness ","Fatigue "][i.datasetIndex]+fix(i.parsed.y,0) } } } } });
 
-  const ytd = acts.filter(a => a.date >= "2026-01-01").reduce((s,a) => s + a.km, 0);
-  const doy = Math.round((new Date(TODAY) - new Date("2026-01-01")) / 864e5) + 1;
-  const onPace = ANNUAL_KM_TARGET * doy / 365;
-  $("mYtd").textContent = Math.round(ytd).toLocaleString("en-GB");
-  $("sYtd").textContent = "of " + ANNUAL_KM_TARGET.toLocaleString("en-GB") + " km · even pace would be " + Math.round(onPace).toLocaleString("en-GB");
-  $("ytdBar").style.width  = Math.min(100, ytd / ANNUAL_KM_TARGET * 100) + "%";
-  $("ytdPace").style.left  = Math.min(100, onPace / ANNUAL_KM_TARGET * 100) + "%";
+  const sl = well.filter(w=>w.sleepHours!=null).slice(0,56).reverse();
+  const sl7 = sl.map((_,i)=>mean(sl.slice(Math.max(0,i-6),i+1).map(w=>w.sleepHours)));
+  mk("sleepChart",{ type:"bar", data:{ labels:sl.map(w=>shortDate(w.date)), datasets:[
+      { data:sl.map(w=>w.sleepHours), backgroundColor:DK?"#3f3f46":"#e4e4e7", maxBarThickness:9, order:2 },
+      { type:"line", data:sl7, borderColor:BLUE, borderWidth:2, pointRadius:0, tension:.3, order:1 }]},
+    options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>fix(i.parsed.y,1)+" h" } } },
+      scales:{ y:{ beginAtZero:false, min:4, ticks:{callback:(v)=>v+"h"} }, x:{ ticks:{maxTicksLimit:8} } } } });
 
-  const g = new Date(data.generated || Date.now());
-  $("stamp").textContent = "Synced " + g.toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"}) +
-    " · " + acts.length + " runs · " + well.length + " wellness days";
+  drawFeel();
+
+  const g = new Date(data.generated||Date.now());
+  const ytd = acts.filter(a=>a.date>="2026-01-01").reduce((s,a)=>s+a.km,0);
+  $("stamp").textContent = "Synced "+g.toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+
+    " · "+acts.length+" runs · "+Math.round(ytd)+" km this year of "+S.annual;
+}
+
+let feelChart=null;
+function drawFeel(){
+  const log=readL(), labels=[], vals=[];
+  for(let i=29;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); const k=iso(d);
+    labels.push(shortDate(k)); vals.push(log[k]&&log[k].feel!=null?log[k].feel:null); }
+  if(feelChart) feelChart.destroy();
+  feelChart = mk("feelChart",{ type:"line", data:{ labels, datasets:[{
+      data:vals, borderColor:GREEN, borderWidth:2, pointRadius:2.5, pointBackgroundColor:GREEN, tension:.3, spanGaps:true }]},
+    options:{ scales:{ y:{ min:0, max:10, ticks:{stepSize:2} }, x:{ ticks:{maxTicksLimit:6} } } } });
 }
 </script>
 </body>
