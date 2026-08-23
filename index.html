@@ -97,9 +97,9 @@ tailwind.config = { darkMode:'media', theme:{ extend:{ fontFamily:{
     you have held fitness but not built it.
   </p>
 
-  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1">Aerobic durability · decoupling on long runs</p>
+  <p class="lbl text-zinc-400 dark:text-zinc-600 mb-1" id="decoupTitle">Aerobic durability · decoupling on long runs</p>
   <div class="relative h-[190px] mb-3"><canvas id="decoupChart"></canvas></div>
-  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xl">
+  <p class="whisper text-[13px] text-zinc-500 dark:text-zinc-400 max-w-xl" id="decoupNote">
     How much your heart rate drifts upward through a long run relative to pace. Under 5% means the aerobic base
     held all the way. Above 10% means you outran it and the second half cost far more than the first.
     <b class="not-italic font-medium">Falling over a block is the signature of genuine endurance being built</b>, and it usually
@@ -434,10 +434,22 @@ function render(data){
   tile("tilesPerf","VO₂ max", vo?fix(vo.vo2max,1):"—",
     voOld ? (vo.vo2max-voOld.vo2max>=0?"+":"")+fix(vo.vo2max-voOld.vo2max,1)+" over 90 days" : "slow moving");
 
-  const longs = acts.filter(a=>a.km>=12&&a.decoupling!=null).slice(0,6);
-  const dc = longs.length?mean(longs.map(a=>a.decoupling)):null;
-  tile("tilesPerf","Decoupling", dc!=null?fix(dc,1)+"%":"—", "last 6 long runs",
-    dc==null?"":dc<5?GOOD:dc<10?WARN:BAD);
+  const longs = acts.filter(a=>a.km>=12&&a.decoupling!=null&&a.decoupling>0).slice(0,6);
+  const dc = longs.length>=2 ? mean(longs.map(a=>a.decoupling)) : null;
+  // Long-run efficiency, the fallback when streams are missing.
+  const longEff = acts.filter(a=>a.km>=12&&a.metresPerBeat)
+    .map(a=>({date:a.date,v:a.metresPerBeat,km:a.km})).sort((x,y)=>x.date<y.date?-1:1);
+  const HAS_DECOUP = longs.length>=3;
+  if (HAS_DECOUP){
+    tile("tilesPerf","Decoupling", fix(dc,1)+"%", "last "+longs.length+" long runs",
+      dc<5?GOOD:dc<10?WARN:BAD);
+  } else {
+    const le = mean(longEff.slice(-4).map(e=>e.v));
+    const leRatio = (le && eff5) ? le/eff5 : null;
+    tile("tilesPerf","Long-run cost", leRatio!=null?fix(leRatio*100,0)+"%":"—",
+      leRatio!=null?"efficiency vs your easy runs":"need long runs with HR",
+      leRatio==null?"":leRatio>=0.97?GOOD:leRatio>=0.92?WARN:BAD);
+  }
 
   const km7  = acts.filter(a=>a.date>=since(7)).reduce((s,a)=>s+a.km,0);
   const km28 = acts.filter(a=>a.date>=since(28)).reduce((s,a)=>s+a.km,0);
@@ -493,10 +505,17 @@ function render(data){
       : effDelta<-2 ? "Down "+fix(Math.abs(effDelta),1)+"%. Check heat, sleep and accumulated fatigue before concluding you have lost fitness."
       : "Flat within "+fix(Math.abs(effDelta),1)+"%. Neither gaining nor losing.", effDelta>1?"good":effDelta<-2?"bad":"flat");
 
-  if (dc!=null)
+  if (HAS_DECOUP)
     push("Durability", dc<5 ? "Decoupling averages "+fix(dc,1)+"% on long runs. Your aerobic base holds all the way through."
       : dc<10 ? "Decoupling averages "+fix(dc,1)+"%. Acceptable, but the back half of long runs is costing you more than the front."
       : "Decoupling averages "+fix(dc,1)+"%. You are outrunning your base on long runs. Slow them down.", dc<5?"good":dc<10?"flat":"bad");
+  else if (longEff.length>=3 && eff5){
+    const le = mean(longEff.slice(-4).map(e=>e.v)), r = le/eff5;
+    push("Durability", r>=0.97 ? "Your long runs cost about the same per kilometre as your easy runs. Endurance is holding."
+      : r>=0.92 ? "Long runs run "+fix((1-r)*100,0)+"% less efficiently than your easy runs. Normal, but worth watching."
+      : "Long runs run "+fix((1-r)*100,0)+"% less efficiently than your easy runs. You are running them too fast for your current base.",
+      r>=0.97?"good":r>=0.92?"flat":"bad");
+  }
 
   if (ezPct!=null)
     push("Intensity", ezPct>=80 ? ezPct+"% of the last month was easy. That is the right distribution."
@@ -570,12 +589,33 @@ function render(data){
                    ticks:{ callback:(v)=>mmss(v*60) } },
                y:{ title:{display:true,text:"avg HR",color:TICK,font:{size:10}} } } } });
 
-  const dcRuns = acts.filter(a=>a.km>=12&&a.decoupling!=null).slice(0,24).reverse();
-  mk("decoupChart",{ type:"bar", data:{ labels:dcRuns.map(a=>shortDate(a.date)), datasets:[{
-      data:dcRuns.map(a=>a.decoupling), borderRadius:3, maxBarThickness:16,
-      backgroundColor:dcRuns.map(a=>a.decoupling<5?GREEN:a.decoupling<10?AMBER:ROSE) }]},
-    options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>fix(i.parsed.y,1)+"% drift" } } },
-      scales:{ y:{ beginAtZero:true, ticks:{ callback:(v)=>v+"%" } } } } });
+  if (HAS_DECOUP){
+    const dcRuns = acts.filter(a=>a.km>=12&&a.decoupling!=null&&a.decoupling>0).slice(0,24).reverse();
+    mk("decoupChart",{ type:"bar", data:{ labels:dcRuns.map(a=>shortDate(a.date)), datasets:[{
+        data:dcRuns.map(a=>a.decoupling), borderRadius:3, maxBarThickness:16,
+        backgroundColor:dcRuns.map(a=>a.decoupling<5?GREEN:a.decoupling<10?AMBER:ROSE) }]},
+      options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=>fix(i.parsed.y,1)+"% drift" } } },
+        scales:{ y:{ beginAtZero:true, ticks:{ callback:(v)=>v+"%" } } } } });
+  } else {
+    // No stream data, so decoupling cannot be computed. Fall back to how
+    // efficiently the long runs themselves were run, which needs only summaries.
+    $("decoupTitle").textContent = "Aerobic durability · efficiency on long runs";
+    $("decoupNote").innerHTML =
+      'Decoupling needs the second-by-second data inside a run, which your imported activities do not carry, ' +
+      'so this shows the next best thing: metres per heartbeat on every run over 12 km. ' +
+      '<b class="not-italic font-medium">Rising over a block means your endurance is deepening</b> — you are covering long ' +
+      'distances at a lower cardiac cost. The dashed line is your average across all easy runs; long runs sitting ' +
+      'close to it means the distance is not costing you much extra, which is exactly what you want.';
+    const avgEasy = eff5;
+    mk("decoupChart",{ type:"bar", data:{ labels:longEff.map(e=>shortDate(e.date)), datasets:[
+        { data:longEff.map(e=>e.v), borderRadius:3, maxBarThickness:16,
+          backgroundColor:longEff.map(e=>!avgEasy?BLUE:e.v>=avgEasy*0.97?GREEN:e.v>=avgEasy*0.92?AMBER:ROSE) },
+        ...(avgEasy ? [{ type:"line", data:longEff.map(()=>avgEasy), borderColor:TICK, borderWidth:1.25,
+          borderDash:[4,3], pointRadius:0 }] : []) ]},
+      options:{ plugins:{ tooltip:{ callbacks:{ label:(i)=> i.datasetIndex ? "easy-run average"
+          : fix(i.parsed.y,3)+" m/beat · "+fix(longEff[i.dataIndex].km,1)+" km" } } },
+        scales:{ y:{ beginAtZero:false, ticks:{ callback:(v)=>Number(v).toFixed(2) } } } } });
+  }
 
   /* ── §4 charts ── */
   const wkKeys=[]; for(let i=25;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i*7); wkKeys.push(monday(d)); }
