@@ -434,7 +434,16 @@ function render(data){
       cadence: cad ? Math.round(cad*10)/10 : null,
       strideM: st ? Math.round(st*1000)/1000 : null };
   }).sort((a,b)=>a.date<b.date?1:-1);
-  const well = (data.wellness||[]).slice().sort((a,b)=>a.date<b.date?1:-1);
+  const well = (data.wellness||[]).map(w=>{
+    // intervals.icu writes 0 for a day it has no reading for yet. A resting
+    // heart rate of zero is not a measurement, so treat these as missing —
+    // otherwise today's blank record drags every baseline down with it.
+    const clean = {...w};
+    ["rhr","hrv","vo2max","sleepScore","sleepHours","steps"].forEach(k=>{
+      if (clean[k] === 0) clean[k] = null;
+    });
+    return clean;
+  }).sort((a,b)=>a.date<b.date?1:-1);
   const log  = readL();
 
   const ser = (k,n,skip=0) => well.filter(w=>w[k]!=null).slice(skip,skip+n).map(w=>w[k]);
@@ -462,8 +471,14 @@ function render(data){
   const strideNow = mean(withStride.filter(a=>a.hr!=null&&a.hr<S.easy).slice(0,5).map(a=>a.strideM));
 
   /* ── §1 tiles ── */
-  const latest = well[0]||{};
-  const hrvBase = mean(ser("hrv",30,1)), rhrBase = mean(ser("rhr",30,1));
+  const hrvBase = mean(ser("hrv",30,1));
+  const rhrBase = mean(ser("rhr",30,1));
+  // Each metric comes from the most recent day that actually has it, rather
+  // than from one shared record that may be half empty.
+  const newest = (k) => well.find(w => w[k] != null) || {};
+  const hrvDay = newest("hrv"), rhrDay = newest("rhr");
+  const latest = { hrv: hrvDay.hrv, rhr: rhrDay.rhr };
+  const stale = (d) => (!d || d === TODAY) ? "" : " · " + shortDate(d);
   const hDev = latest.hrv!=null&&hrvBase ? latest.hrv-hrvBase : null;
   const rDev = latest.rhr!=null&&rhrBase ? latest.rhr-rhrBase : null;
   const sleep7 = mean(ser("sleepHours",7)), sleep28 = mean(ser("sleepHours",28));
@@ -471,16 +486,18 @@ function render(data){
   const stepDay = well.find(w=>w.steps!=null&&w.date!==TODAY)||well.find(w=>w.steps!=null);
 
   tile("tilesRecovery","HRV", fix(latest.hrv,0),
-    hrvBase ? (hDev>=0?"+":"")+fix(hDev,0)+" vs "+fix(hrvBase,0)+" baseline" : "no baseline yet",
+    latest.hrv==null ? "not recorded yet"
+      : (hrvBase ? (hDev>=0?"+":"")+fix(hDev,0)+" vs "+fix(hrvBase,0)+" baseline"+stale(hrvDay.date) : "no baseline yet"),
     hDev==null?"":hDev<-8?BAD:hDev<-4?WARN:GOOD);
   tile("tilesRecovery","Resting HR", fix(latest.rhr,0),
-    rhrBase ? (rDev>=0?"+":"")+fix(rDev,0)+" vs "+fix(rhrBase,0)+" baseline" : "no baseline yet",
+    latest.rhr==null ? "not recorded yet"
+      : (rhrBase ? (rDev>=0?"+":"")+fix(rDev,0)+" vs "+fix(rhrBase,0)+" baseline"+stale(rhrDay.date) : "no baseline yet"),
     rDev==null?"":rDev>4?BAD:rDev>2?WARN:GOOD);
   tile("tilesRecovery","Sleep, 7 nights", fix(sleep7,1),
     sleep28 ? "hours · 28-night "+fix(sleep28,1) : "hours",
     sleep7==null?"":sleep7<6.8?BAD:sleep7<7.3?WARN:GOOD);
   tile("tilesRecovery","Sleep score", ss?fix(ss.sleepScore,0):"—",
-    ss?("out of 100 · "+(ss.date===TODAY?"last night":shortDate(ss.date))):"",
+    ss?("out of 100 · "+(ss.date===TODAY?"last night":shortDate(ss.date))):"not recorded yet",
     !ss?"":ss.sleepScore<60?BAD:ss.sleepScore<75?WARN:GOOD);
 
   // efficiency
@@ -496,10 +513,12 @@ function render(data){
   tile("tilesPerf","Efficiency trend", effDelta!=null?(effDelta>=0?"+":"")+fix(effDelta,1)+"%":"—",
     "last 5 runs vs previous 7", effDelta==null?"":effDelta>1?GOOD:effDelta<-2?BAD:WARN);
 
-  const vo = well.find(w=>w.vo2max!=null);
-  const voOld = well.filter(w=>w.vo2max!=null)[89];
+  const voList = well.filter(w=>w.vo2max!=null);
+  const vo = voList[0], voOld = voList[89];
   tile("tilesPerf","VO₂ max", vo?fix(vo.vo2max,1):"—",
-    voOld ? (vo.vo2max-voOld.vo2max>=0?"+":"")+fix(vo.vo2max-voOld.vo2max,1)+" over 90 days" : "slow moving");
+    !vo ? "not reported by Garmin yet"
+      : voOld ? (vo.vo2max-voOld.vo2max>=0?"+":"")+fix(vo.vo2max-voOld.vo2max,1)+" over 90 days"
+      : "slow moving · "+shortDate(vo.date));
 
   const longs = acts.filter(a=>a.km>=12&&a.decoupling!=null&&a.decoupling>0).slice(0,6);
   const dc = longs.length>=2 ? mean(longs.map(a=>a.decoupling)) : null;
