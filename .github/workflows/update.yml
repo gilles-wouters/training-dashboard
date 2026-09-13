@@ -2,8 +2,12 @@ name: Update training data
 
 on:
   schedule:
-    - cron: "0 5 * * *"
-  workflow_dispatch:
+    # GitHub cron is always UTC and has no timezone setting, so there are two
+    # entries: one for Brussels summer time (UTC+2), one for winter (UTC+1).
+    # Both fire year-round, which just means a harmless second run each day.
+    - cron: "30 6 * * *" # 08:30 Brussels, late March to late October
+    - cron: "30 7 * * *" # 08:30 Brussels, late October to late March
+  workflow_dispatch: # lets you run it manually from the Actions tab
 
 permissions:
   contents: write
